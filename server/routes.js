@@ -47,5 +47,27 @@ const requesHandler = (request, response) => {
 }
 
 module.exports = requesHandler;
+//you can also use the next syntaxis
 
+/**
+ * module.exports = {
+ * handler : requesHandler,
+ * someText: 'Some hard text setted'
+ * 
+ * }
+ * 
+ */
+
+//also you can set every handler / method that you want to export doing something like next:
+/**
+ * module.exports.handler = requestHandler;
+ * module.exports.someText = 'Some hard Text setted';
+ * 
+ * 
+ */
+//shortcut supported by node is doing something like next:
+/**
+ * exports.handler = requestHandler;
+ * 
+ */
 
