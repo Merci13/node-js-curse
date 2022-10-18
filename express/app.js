@@ -4,7 +4,7 @@ const app = express();
 const paht = require('path');
 const bodyParser = require('body-parser');//package to help getting data from request
 
-const adminRoutes = require('./routes/admin');
+const adminData = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const rootDir = require('./utils/path');
 
@@ -14,7 +14,7 @@ const rootDir = require('./utils/path');
 
 app.use(bodyParser.urlencoded({extended: false}))
 
-app.use(adminRoutes);
+app.use('/admin', adminData.routes);
 app.use(shopRoutes);
 app.use(express.static(paht.join(rootDir, 'public')));//take in mind that with this, the path start in the public folder
 

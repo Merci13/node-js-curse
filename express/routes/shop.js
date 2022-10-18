@@ -3,9 +3,12 @@ const path = require('path');
 
 const router = express.Router();
 
+const adminData =  require('./admin');
 
 
 router.get('/',(req, res, next) => { 
+
+    console.log(adminData.products);
     //this route ('/') need to be the last one to be check,
     // becouse, express will check every rout that start with '/'
     res.sendFile(path.join( //join helps to create a path 
@@ -17,6 +20,7 @@ router.get('/',(req, res, next) => {
           * Note: is important to do this in sections, becouse path package will make the path for windows, linux and mac System Operative
           */
 });
+
 
 
 module.exports = router;
