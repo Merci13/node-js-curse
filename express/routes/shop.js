@@ -28,7 +28,10 @@ router.get('/',(req, res, next) => {
      * Also we don't need to especificate the extension of the file, becouse we tell before to node.js that
      * we were using pug files
      */
-res.render('shop'); 
+
+   const products = adminData.products;
+
+res.render('shop', {prod: products, docTitle: 'Shop'}); 
 
 });
 
