@@ -3,10 +3,20 @@ const paht = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');//package to help getting data from request
+//const expressHbs = require('express-handlebars');
 
 const app = express();
 
-app.set('view engine', 'pug');//say to node that we are using template engine and what we are using for.
+//engines
+//app.set('view engine', 'pug');//say to node that we are using template engine and what we are using for.
+// app.engine('hbs', expressHbs( 
+//     {layoutsdir: 'views/layouts/', 
+//     defaultLayout: 'main-layout',
+//     extname: 'hbs'
+// }),);//say to node that we are using Handlebars template engine
+//app.set('view engine', 'hbs');
+
+app.set('view engine', 'ejs');
 app.set('views', 'views');//say to node where are this template
 
 const adminData = require('./routes/admin');
