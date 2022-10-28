@@ -1,37 +1,33 @@
-const express = require('express');
 const path = require('path');
 
-const rootDir = require('../utils/path');
+const express = require('express');
+
+
+//const rootDir = require('../utils/path'); //for getting the root path for html views
+
+const adminController = require('../controllers/admin');
+
 const router = express.Router();
 
-const products = [];
 
 
-router.get('/add-product', (req, res, next) => {
-    //res.sendFile(path.join(rootDir,'views', 'add-product.html'))//for routing with html 
-    res.render(
-        'add-product.pug',
-        {
-            pageTitle: 'Add Product',
-            path: '/add-product',
-            activeProduct: true,
-            formsCSS: true,
-            productCSS: true,
-            
-            
-        });
 
-});
-
-router.post('/add-product', (req, res, next) => {
+router.get(
+    '/add-product',
+    /**
+     * just passing the reference for express to store and use when someone calls get function,
+     * if I pass the productsController.getAddProduct with (), it won't work
+     *                      |
+     *                      V
+     */
+     adminController.getAddProduct 
+     );
 
 
-    products.push({ title: req.body.title });
+router.get('/admin-product', adminController.getProducts);     
 
-    res.redirect('/');
-
-});
+router.post('/add-product', adminController.postAddProduct);
 
 
-exports.router = router;
-exports.products = products;
+module.exports = router;
+

@@ -4,6 +4,7 @@ const paht = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');//package to help getting data from request
 //const expressHbs = require('express-handlebars');
+const errorController = require('./controllers/error');
 
 const app = express();
 
@@ -19,7 +20,7 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', 'views');//say to node where are this template
 
-const adminData = require('./routes/admin');
+const adminRoutes= require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const rootDir = require('./utils/path');
 
@@ -34,16 +35,12 @@ app.use(express.static(paht.join(rootDir, 'public')));//take in mind that with t
 
 app.use(
    // '/add-product', 
-    adminData.router);
+    adminRoutes);
 app.use(shopRoutes);
 
 
 
-app.use((req, res, next) =>{
-    res.status(404);
-    console.log(req.method);
-   res.sendFile(paht.join(rootDir,'views','not-found.html'));
-});
+app.use(errorController.get404);
 
 // app.use((req, res, next) => {
 //     console.log('in the middle ware');
