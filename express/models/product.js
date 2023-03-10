@@ -69,6 +69,8 @@ module.exports = class Product {
 
         //-------------------------------------------------------------------------------------//
 
+       return database.execute('INSERT INTO products(title, price, description,imageUrl) VALUES(?,?,?,?)',
+        [this.title, this.price, this.description, this.imageUrl]);
 
 
     }
@@ -115,6 +117,9 @@ module.exports = class Product {
         //     callBack(product);
         // });
         //-------------------------------------------------------------------------------------//
+    
+        return database.execute('SELECT * FROM products WHERE products.id = ?', [id]);
+    
     }
 
 }

@@ -23,32 +23,39 @@ exports.getProducts = (req, res, next) => {
     * Also we don't need to especificate the extension of the file, becouse we tell before to node.js that
     * we were using pug files
     */
-   const products = Product.fetchAll((products) => {
-      res.render('shop/product-list',
+   const products = Product.fetchAll().then(([rows, fetchData]) =>{
+  res.render('shop/product-list',
          {
-            prod: products,
+            prod: rows,
             pageTitle: 'All Products',
             path: '/products',
             activeShop: true,
 
          });
-   });
 
 
+   }).catch((err => {
+
+      console.log(err, "---------------------->>>>>")
+   }));
+
+   
 
 };
 
 exports.getProductById = (req, res, next) => {
    const productId = req.params.productId;
-   Product.findById(productId, product => {
+   Product.findById(productId)
+   .then(([product, fetchData])=>{
       res.render('shop/product-detail',
-         {
-            product: product,
-            pageTitle: product.title,
-            path: `product/${product.id}`
-         }
-      );
-   });
+      {
+         product: product[0],
+         pageTitle: product.title,
+         path: `product/${product.id}`
+      })
+   })
+   .catch(err => console.log(err));
+   
 
 
 
@@ -60,10 +67,7 @@ exports.getProductById = (req, res, next) => {
 exports.getIndex = (req, res, nex) => {
 
    const products = Product.fetchAll().then(
-      
-
       ([rows, fieldData]) => {
-         
          console.log(rows, "------------>>>>");
          res.render('shop/index',
             {
@@ -73,9 +77,6 @@ exports.getIndex = (req, res, nex) => {
                activeShop: true,
 
             });
-
-
-
       }).catch(err => {
          console.log(err, "------------>>>")
       });

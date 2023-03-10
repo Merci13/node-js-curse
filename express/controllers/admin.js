@@ -29,9 +29,14 @@ exports.postAddProduct = (req, res, next) => {
 
 
     const product = new Product(null,title, image, description, price);
-    product.save();
+    product.save()
+    .then(()=>{
+        res.redirect('/');
+    }).catch(err => {
+        console.log(err, "--------------->>>>>>>>>")
+    });
 
-    res.redirect('/');
+  
 
 };
 
