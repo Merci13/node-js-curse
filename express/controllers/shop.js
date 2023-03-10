@@ -59,16 +59,28 @@ exports.getProductById = (req, res, next) => {
 
 exports.getIndex = (req, res, nex) => {
 
-   const products = Product.fetchAll((products) => {
-      res.render('shop/index',
-         {
-            prod: products,
-            pageTitle: 'Shop',
-            path: '/',
-            activeShop: true,
+   const products = Product.fetchAll().then(
+      
 
-         });
-   });
+      ([rows, fieldData]) => {
+         
+         console.log(rows, "------------>>>>");
+         res.render('shop/index',
+            {
+               prod: rows,
+               pageTitle: 'Shop',
+               path: '/',
+               activeShop: true,
+
+            });
+
+
+
+      }).catch(err => {
+         console.log(err, "------------>>>")
+      });
+
+
 
 
 };
@@ -110,7 +122,7 @@ exports.postCart = (req, res, next) => {
    //add the product to the cart
    Product.findById(productId, (product) => {
       Cart.addProduct(productId, product.price);
-      
+
       //get cart and passed to the view
       Cart.getCart(cart => {
          Product.fetchAll(products => {
