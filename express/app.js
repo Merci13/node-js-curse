@@ -6,7 +6,8 @@ const bodyParser = require('body-parser');//package to help getting data from re
 //const expressHbs = require('express-handlebars');
 const errorController = require('./controllers/error');
 
-const database = require('./utils/database');//this will be the pool for conections
+const sequelize = require('./utils/database');//this will be the pool for conections
+
 
 const app = express();
 
@@ -22,14 +23,14 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', 'views');//say to node where are this template
 
-const adminRoutes= require('./routes/admin');
+const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
 
 
 const rootDir = require('./utils/path');
 
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(paht.join(rootDir, 'public')));//take in mind that with this, the path start in the public folder
 
 
@@ -39,7 +40,7 @@ app.use(express.static(paht.join(rootDir, 'public')));//take in mind that with t
  */
 
 app.use(
-   // '/add-product', 
+    // '/add-product', 
     adminRoutes);
 app.use(shopRoutes);
 
@@ -53,7 +54,9 @@ app.use(errorController.get404);
 // });
 
 
+sequelize.sync().then(result => {
+    console.log(result);
+    app.listen(3000);
+}).catch(err => { console.log(err) });
 
 
-
-app.listen(3000);
