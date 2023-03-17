@@ -25,7 +25,7 @@ const Sequelize = require('sequelize'); // when the constant is capitalize means
 const sequelize = new Sequelize(
     'node-complete',//data base name
     'root', // username from the data base
-    'need1992',// password
+    '',// password
     {dialect: 'mysql',
     host: 'localhost'
     }
