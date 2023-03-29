@@ -7,6 +7,10 @@ const bodyParser = require('body-parser');//package to help getting data from re
 const errorController = require('./controllers/error');
 
 const sequelize = require('./utils/database');//this will be the pool for conections
+const Product = require('./models/product');
+const User = require('./models/user');
+
+
 
 
 const app = express();
@@ -33,6 +37,14 @@ const rootDir = require('./utils/path');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(paht.join(rootDir, 'public')));//take in mind that with this, the path start in the public folder
 
+app.use((req, res, next) => {
+    User.findByPk(1)
+    .then(user => {
+        req.user = user;
+        next();
+     })
+    .catch(err => { console.log("Error: ", err, "----------------->>>") });
+});
 
 
 /**
@@ -54,9 +66,36 @@ app.use(errorController.get404);
 // });
 
 
-sequelize.sync().then(result => {
-    console.log(result);
-    app.listen(3000);
-}).catch(err => { console.log(err) });
+Product.belongsTo(User, { constrains: true, onDelete: 'CASCADE' });
+
+User.hasMany(Product);
+
+
+
+sequelize.sync(
+    // {
+    //     force: true, //ToDo remove this force key in production
+    // }
+).then(result => {
+
+    return User.findByPk(1);
+
+})
+    .then(user => {
+        if (!user) {
+            return User.create({
+                name: "Patito",
+                email: "patito@test.com"
+            });
+        }
+        //return Promise.resolve(user);//a way to return a promise
+        return user;
+    })
+    .then(user => {
+        // console.log(user);
+
+        app.listen(3000);
+    })
+    .catch(err => { console.log(err) });
 
 

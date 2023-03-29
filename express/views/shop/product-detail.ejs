@@ -10,7 +10,10 @@
        <h1> <%= product.title %> </h1>
        <hr>
        <div>
-        <img src="<%= product.imageUrl %>" alt="<%= product.title %>">
+        <div class="image">
+            <img src="<%= product.imageUrl %>" alt="<%= product.title %>">
+
+        </div>
        </div>
        <h2>Product Price</h2>
        <p><%= product.price %></p>

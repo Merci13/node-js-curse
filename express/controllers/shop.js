@@ -23,41 +23,80 @@ exports.getProducts = (req, res, next) => {
     * Also we don't need to especificate the extension of the file, becouse we tell before to node.js that
     * we were using pug files
     */
-   const products = Product.fetchAll().then(([rows, fetchData]) =>{
-  res.render('shop/product-list',
+   //    const products = Product.fetchAll().then(([rows, fetchData]) =>{
+   //   res.render('shop/product-list',
+   //          {
+   //             prod: rows,
+   //             pageTitle: 'All Products',
+   //             path: '/products',
+   //             activeShop: true,
+
+   //          });
+
+
+   //    }).catch((err => {
+
+   //       console.log(err, "---------------------->>>>>")
+   //    }));
+   //----------------Sequelize-------------------//
+
+   Product.findAll().then(products => {
+      console.log("Products: ---------------------------_>>>>", products);
+
+      res.render('shop/product-list',
          {
-            prod: rows,
+            prod: products,
             pageTitle: 'All Products',
             path: '/products',
             activeShop: true,
 
          });
 
+   }).catch(err => console.log(err, "Error Fetchin All --------->>>>>"));
 
-   }).catch((err => {
-
-      console.log(err, "---------------------->>>>>")
-   }));
-
-   
 
 };
 
 exports.getProductById = (req, res, next) => {
    const productId = req.params.productId;
-   Product.findById(productId)
-   .then(([product, fetchData])=>{
-      res.render('shop/product-detail',
-      {
-         product: product[0],
-         pageTitle: product.title,
-         path: `product/${product.id}`
-      })
-   })
-   .catch(err => console.log(err));
-   
+   // Product.findById(productId)
+   // .then(([product, fetchData])=>{
+   //    res.render('shop/product-detail',
+   //    {
+   //       product: product[0],
+   //       pageTitle: product.title,
+   //       path: `product/${product.id}`
+   //    })
+   // })
+   // .catch(err => console.log(err));
+
+   //---------Sequelize-------------//
+
+   Product.findByPk(productId).then(
+      product => {
+         res.render('shop/product-detail',
+            {
+               product: product,
+               pageTitle: product.title,
+               path: `product/${product.id}`
+            })
+      }
+   ).catch(err => console.log("Error find By PK : ", err, "-------------->>>>>>>"))
 
 
+   //-----------Second manner to perform find--------//
+
+   // Product.findAll({ where: {
+   //    id: productId
+   // } }).then(products => {
+   //    res.render('shop/product-detail',
+   //    {
+   //       product: products[0],
+   //       pageTitle: products[0].title,
+   //       path: `product/${products[0].id}`
+   //    })
+
+   //  }).catch(err => console.log(err, "------------->>>"));
 
 
 
@@ -66,21 +105,35 @@ exports.getProductById = (req, res, next) => {
 
 exports.getIndex = (req, res, nex) => {
 
-   const products = Product.fetchAll().then(
-      ([rows, fieldData]) => {
-         console.log(rows, "------------>>>>");
-         res.render('shop/index',
-            {
-               prod: rows,
-               pageTitle: 'Shop',
-               path: '/',
-               activeShop: true,
+   // const products = Product.fetchAll().then(
+   //    ([rows, fieldData]) => {
+   //       console.log(rows, "------------>>>>");
+   //       res.render('shop/index',
+   //          {
+   //             prod: rows,
+   //             pageTitle: 'Shop',
+   //             path: '/',
+   //             activeShop: true,
 
-            });
-      }).catch(err => {
-         console.log(err, "------------>>>")
-      });
+   //          });
+   //    }).catch(err => {
+   //       console.log(err, "------------>>>")
+   //    });
+   //--------Sequelize------------//
 
+   Product.findAll().then(products => {
+      console.log("Products: ---------------------------_>>>>", products);
+
+      res.render('shop/index',
+         {
+            prod: products,
+            pageTitle: 'Shop',
+            path: '/',
+            activeShop: true,
+
+         });
+
+   }).catch(err => console.log(err, "Error Fetchin All --------->>>>>"));
 
 
 
@@ -111,6 +164,8 @@ exports.getCart = (req, res, next) => {
          });
       }
       );
+
+      
 
    });
 

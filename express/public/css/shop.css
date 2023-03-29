@@ -21,6 +21,13 @@ body {
 
 }
 
+.image{
+    height: 20rem;
+  }
+  .image img{
+      height: 100%;
+  }
+
 .main-header__item-list {
     list-style: none;
     margin: 0%;
@@ -55,4 +62,11 @@ body {
 main {
     padding-left: 10px;
     padding-top: 10px;
+}
+.card__image{
+    height: 20rem;
+}
+
+.card__image img{
+    height: 100%;
 }
