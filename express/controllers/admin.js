@@ -41,7 +41,8 @@ exports.postAddProduct = (req, res, next) => {
         title: title,
         imageUrl: image,
         price: price,
-        description: description
+        description: description,
+        
     })
     .then(result => {
         console.log("Created product ID:", result['dataValues']['id'], "---------------->>>>>");
@@ -86,7 +87,13 @@ exports.getEditProduct = (req, res, next) => {
     //-------Sequelize---------//
     //Note: replace all ocurrences of .findById() to .findByPk();
 
-    Product.findByPk(productId).then(product => {
+    req.user.getProducts({where: { id: productId}})
+
+   // Product.findByPk(productId)
+    
+    .then(products => {
+
+        const product = products[0];
 
         if (!product) {
             return res.redirect('/');
@@ -122,8 +129,10 @@ exports.getProducts = (req, res, nex) => {
     // });
 
     //----------Sequelize----------//
+    req.user.getProducts()
 
-    Product.findAll().then(products => {
+    // Product.findAll()
+    .then(products => {
         res.render('admin/products',
             {
                 prod: products,

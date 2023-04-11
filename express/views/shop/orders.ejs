@@ -6,7 +6,30 @@
    <%- include('../includes/navigation.ejs') %>
 
    <main>
-        <h1>ORDER PAGE</h1>
+
+
+     <% if(orders.length <= 0){ %>
+
+          <h1>No Orders Yet!</h1>
+          <% }else { %>
+                    <ul>
+                         <% orders.foreEach(order => {   %>
+                                   <li>
+                                       <h1> <%= order.id %></h1>      
+                                       <ul>
+
+                                         <% order.products.foreEach(product => {   %>
+                                             
+                                             <li> 
+                                                  <%= product.title %> (<%= product.orderItem.quantity) %>
+                                             </li>
+                                             <% });%>
+                                       </ul>
+                                   </li>
+                              <% });%>
+
+                    </ul>
+               <% }%>
    </main>
 
    <%- include('../includes/end.ejs') %>
