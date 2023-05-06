@@ -177,7 +177,7 @@ class Product {
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
-        this._id = id;
+        this._id = new mongodb.ObjectId(id);
 
     }
 
@@ -190,7 +190,7 @@ class Product {
             //update the product in the MongoDB
             dbOp = db.collection('products')
             .updateOne(
-                { _id: new mongodb.ObjectId(this._id) }
+                { _id: this._id }
                 , {$set: this});
 
         } else {
