@@ -133,36 +133,53 @@ exports.postAddProduct = (req, res, next) => {
 
 // };
 
-// exports.getProducts = (req, res, nex) => {
+exports.getProducts = (req, res, nex) => {
 
-//     // const products = Product.fetchAll((products)=>{
-//     //     res.render('admin/products',
-//     //     {
-//     //        prod: products,
-//     //        pageTitle: 'Admin Product',
-//     //        path: '/admin-products',
-//     //        activeShop: true,
+    // const products = Product.fetchAll((products)=>{
+    //     res.render('admin/products',
+    //     {
+    //        prod: products,
+    //        pageTitle: 'Admin Product',
+    //        path: '/admin-products',
+    //        activeShop: true,
 
-//     //     });
-//     // });
+    //     });
+    // });
 
-//     //----------Sequelize----------//
-//     req.user.getProducts()
+    //----------Sequelize----------//
+    // req.user.getProducts()
 
-//     // Product.findAll()
-//     .then(products => {
-//         res.render('admin/products',
-//             {
-//                 prod: products,
-//                 pageTitle: 'Admin Product',
-//                 path: '/admin-products',
-//                 activeShop: true,
+    // // Product.findAll()
+    // .then(products => {
+    //     res.render('admin/products',
+    //         {
+    //             prod: products,
+    //             pageTitle: 'Admin Product',
+    //             path: '/admin-products',
+    //             activeShop: true,
 
-//             });
+    //         });
 
-//     }).catch(err => console.log('Error: ', err, "-------------------->>>>>>>>>>"));
+    // }).catch(err => console.log('Error: ', err, "-------------------->>>>>>>>>>"));
 
-// };
+    Product.fetchAll()
+    .then(products => {
+         
+        res.render('admin/products',
+            {
+                prod: products,
+                pageTitle: 'Admin Product',
+                path: '/admin-products',
+                activeShop: true,
+
+            });
+
+    })
+    .catch(err =>{
+        console.log("Error in admin.js in getProducts Method. Error: ", err, " ------------->>>>>");    
+    })
+
+};
 
 // exports.postEditProduct = (req, res, next) => {
 

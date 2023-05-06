@@ -25,7 +25,7 @@ router.get(
 
 
 
-// router.get('/admin-products', adminController.getProducts);
+router.get('/admin-products', adminController.getProducts);
 
 // router.get('/edit-product/:productId', adminController.getEditProduct);
 

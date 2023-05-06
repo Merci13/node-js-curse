@@ -22,9 +22,10 @@
                             <p class="product__description"><%= product.description %></p>
                         </div>
                         <div class="card__actions">
-                            <a href="/edit-product/<%= product.id %>?edit=true" class="btn">Edit</a>
+                            <!-- For MongoDB use product._id instead of product.id -->
+                            <a href="/edit-product/<%= product._id %>?edit=true" class="btn">Edit</a>
                             <form action="/delete-product" method="POST">
-                                <input type="hidden", value="<%= product.id %>", name="productId">
+                                <input type="hidden", value="<%= product._id %>", name="productId">
                               <button class="btn" type="submit">Delete</button>
 
                             </form>
