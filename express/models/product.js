@@ -192,5 +192,18 @@ class Product {
             });
     }
 
+    static fetchAll() {
+        const db = getDb();
+        
+        return db.collection('products')
+        .find()
+        .toArray()
+        .then(products =>{
+            console.log(products);
+            return products;
+        })
+        .catch('Error trying to FetchAll Products in product.js. Error: ', err, ' -------------->>>>');
+    }
+
 }
 module.exports = Product;

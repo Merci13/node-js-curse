@@ -41,19 +41,35 @@ exports.getProducts = (req, res, next) => {
    //    }));
    //----------------Sequelize-------------------//
 
-   Product.findAll().then(products => {
-      console.log("Products: ---------------------------_>>>>", products);
+   // Product.findAll().then(products => {
+   //    console.log("Products: ---------------------------_>>>>", products);
 
+   //    res.render('shop/product-list',
+   //       {
+   //          prod: products,
+   //          pageTitle: 'All Products',
+   //          path: '/products',
+   //          activeShop: true,
+
+   //       });
+
+   // }).catch(err => console.log(err, "Error Fetchin All --------->>>>>"));
+   
+   //----------Mongo-------------//
+   Product.fetchAll()
+   .then(products =>{
       res.render('shop/product-list',
-         {
-            prod: products,
-            pageTitle: 'All Products',
-            path: '/products',
-            activeShop: true,
-
-         });
-
-   }).catch(err => console.log(err, "Error Fetchin All --------->>>>>"));
+      {
+         prod: products,
+         pageTitle: 'All Products',
+         path: '/products',
+         activeShop: true,
+      }
+      );
+   })
+   .catch(err =>{
+      console.log(err, "Error Fetchin All --------->>>>>")
+   });
 
 
 };
@@ -137,6 +153,21 @@ exports.getIndex = (req, res, nex) => {
 
    // }).catch(err => console.log(err, "Error Fetchin All --------->>>>>"));
 
+   //----------Mongo-------------//
+   Product.fetchAll()
+   .then(products =>{
+      res.render('shop/index',
+      {
+         prod: products,
+         pageTitle: 'Shop',
+         path: '/',
+         activeShop: true,
+      }
+      );
+   })
+   .catch(err =>{
+      console.log(err, "Error Fetchin All in getIndex Method --------->>>>>")
+   });
 
 
 };

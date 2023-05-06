@@ -67,6 +67,7 @@ app.use((req, res, next) => {
 app.use(
     // '/add-product', 
     adminRoutes);
+    
 app.use(shopRoutes);
 
 app.use(errorController.get404);
