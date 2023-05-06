@@ -1,6 +1,9 @@
 
 
+const mongodb = require('mongodb');
 const Product = require("../models/product");
+
+const ObjectId = mongodb.ObjectId;
 
 
 exports.getAddProduct = (req, res, next) => {
@@ -71,39 +74,39 @@ exports.postAddProduct = (req, res, next) => {
 
 };
 
-// exports.getEditProduct = (req, res, next) => {
-//     //res.sendFile(path.join(rootDir,'views', 'add-product.html'))//for routing with html 
+exports.getEditProduct = (req, res, next) => {
+    //res.sendFile(path.join(rootDir,'views', 'add-product.html'))//for routing with html 
 
-//     //checkin for optionals queryparameters 
-//     // always the extract value will be a string value, soo, this value req.query.edit, will return "false" or "true" insted of 
-//     // false or true
+    //checkin for optionals queryparameters 
+    // always the extract value will be a string value, soo, this value req.query.edit, will return "false" or "true" insted of 
+    // false or true
 
-//     const editMode = req.query.edit;
+    const editMode = req.query.edit;
 
-//     if (!editMode) {
-//         return res.redirect('/');
-//     }
-//     //fetch the product by id
-//     const productId = req.params.productId;
-//     // Product.findById(productId, product => {
-//     //     if (!product) {
-//     //         return res.redirect('/');
-//     //     }
-//     //     res.render(
-//     //         'admin/edit-product',
-//     //         {
+    if (!editMode) {
+        return res.redirect('/');
+    }
+    //fetch the product by id
+    const productId = req.params.productId;
+    // Product.findById(productId, product => {
+    //     if (!product) {
+    //         return res.redirect('/');
+    //     }
+    //     res.render(
+    //         'admin/edit-product',
+    //         {
 
-//     //             pageTitle: 'Edit Product',
-//     //             path: '/edit-product',
-//     //             editing: editMode,
-//     //             product: product
+    //             pageTitle: 'Edit Product',
+    //             path: '/edit-product',
+    //             editing: editMode,
+    //             product: product
 
 
-//     //         });
-//     // });
+    //         });
+    // });
 
-//     //-------Sequelize---------//
-//     //Note: replace all ocurrences of .findById() to .findByPk();
+    //-------Sequelize---------//
+    //Note: replace all ocurrences of .findById() to .findByPk();
 
 //     req.user.getProducts({where: { id: productId}})
 
@@ -129,9 +132,81 @@ exports.postAddProduct = (req, res, next) => {
 
 //     }).catch(err => console.log('Error: ', err, "------------------->>>"));
 
+//----------MongoDB -------------------//
+
+    Product.findById(productId)
+    .then(product => {
 
 
-// };
+        if (!product) {
+            return res.redirect('/');
+        }
+        res.render(
+            'admin/edit-product',
+            {
+                pageTitle: 'Edit Product',
+                path: '/edit-product',
+                editing: editMode,
+                product: product
+
+
+            });
+    })
+    .catch(err => {
+        console.log("Error in admin.js in getEditProduct Method. Error: ", err, " --------------------->>");
+    })
+
+
+
+};
+
+exports.postEditProduct = (req, res, next) => {
+
+    const productId = req.body.productId;
+    const updateTitle = req.body.title;
+    const updatePrice = req.body.price;
+    const updateDescription = req.body.description;
+    const updateImageUrl = req.body.imageUrl;
+
+    // const updateProduct = new Product(productId, updateTitle, updateImageUrl, updateDescription, updatePrice);
+    // updateProduct.save();
+
+    //------Sequelize-----------//
+    // Product.findByPk(productId).then(product => {
+
+    //     product.title = updateTitle;
+    //     product.price = updatePrice;
+    //     product.imageUrl = updateImageUrl;
+    //     product.description = updateDescription;
+    //     return product.save();
+
+
+    // }).then(result => {
+    //     console.log("Updated Product, Id: ", result.id);
+    //     res.redirect('/products');
+    // }).catch(err => console.log("Error: ", err, " ------------>>>>"))
+
+
+    //------------MongoDB----------------------//
+    const product = new Product(
+        updateTitle,
+        updatePrice, 
+        updateDescription, 
+        updateImageUrl, 
+        new ObjectId(productId)
+    );
+
+    product.save()
+    .then(result =>{
+        console.log("Updated Product, Id: ", result.id);
+        res.redirect('/products');
+    })
+    .catch(err => {
+        console.log("Error in admin.js in postEditProduct Method. Error: ", err, " ---------------->>>>>>>");
+    })
+
+
+};
 
 exports.getProducts = (req, res, nex) => {
 
@@ -181,36 +256,6 @@ exports.getProducts = (req, res, nex) => {
 
 };
 
-// exports.postEditProduct = (req, res, next) => {
-
-//     const productId = req.body.productId;
-//     const updateTitle = req.body.title;
-//     const updatePrice = req.body.price;
-//     const updateDescription = req.body.description;
-//     const updateImageUrl = req.body.imageUrl;
-
-//     // const updateProduct = new Product(productId, updateTitle, updateImageUrl, updateDescription, updatePrice);
-//     // updateProduct.save();
-
-//     //------Sequelize-----------//
-//     Product.findByPk(productId).then(product => {
-
-//         product.title = updateTitle;
-//         product.price = updatePrice;
-//         product.imageUrl = updateImageUrl;
-//         product.description = updateDescription;
-//         return product.save();
-
-
-//     }).then(result => {
-//         console.log("Updated Product, Id: ", result.id);
-//         res.redirect('/products');
-//     }).catch(err => console.log("Error: ", err, " ------------>>>>"))
-
-
-
-
-// };
 
 // exports.postDeleteProduct = (req, res, next) => {
 //     const prodId = req.body.productId;
