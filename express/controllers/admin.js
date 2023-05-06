@@ -279,13 +279,11 @@ exports.postDeleteProduct = (req, res, next) => {
     // -------------------MongoDB---------------//
 
     Product.deleteById(prodId)
-        .then(() => {
-            console.log("Destroy: ", '------------->>>>')
-            res.redirect('/products');
-
-        })
-        .catch(err => {
-            console.log(err);
-        });
+    .then(result => {
+        res.redirect('/products');
+    })
+    .catch(err => {
+        console.log(err);
+    });
 
 } 

@@ -239,10 +239,11 @@ class Product {
     static deleteById(productId){
         const db = getDb();
         
-        db.collection('products')
+      return   db.collection('products')
         .deleteOne({_id: new mongodb.ObjectId(productId)})
         .then(result => {
             console.log("DELETED -------->>>");
+            return result;
         })
         .catch(err => {
             console.log("Error in product.js in deleteById Method. Error: ", err , "-------------->>>");
