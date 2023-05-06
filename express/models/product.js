@@ -166,6 +166,7 @@
 
 //--------------------------Using MongoDB------------------------//
 
+const mongodb =require('mongodb');
 const getDb = require('../utils/database').getDb;
 
 class Product {
@@ -205,6 +206,20 @@ class Product {
             .catch(err => {
                 console.log('Error trying to FetchAll Products in product.js. Error: ', err, ' -------------->>>>')
             });
+    }
+
+    static findById(prodId){
+        const db = getDb();
+        return db.collection('products')
+        .find({_id: mongodb.ObjectId(prodId) })
+        .next()
+        .then(product =>{
+            console.log(product, '--------------------->>>>');
+            return product;
+        })
+        .catch(err => {
+            console.log('Error trying to Fetch Produc By Id in product.js. Error: ', err, ' -------------->>>>')
+        });
     }
 
 }

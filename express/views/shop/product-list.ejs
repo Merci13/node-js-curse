@@ -24,8 +24,8 @@
                         </div>
 
                         <div class="card__actions">
-                            
-                            <a href="products/<%= product.id %>"><h1>Details</h1></a>
+                            <!-- For MongoDB use product._id insted of product.id -->
+                            <a href="products/<%= product._id %>"><h1>Details</h1></a>
                             
                             <%- include('../includes/add-to-cart.ejs', {product: product}) %>
                          

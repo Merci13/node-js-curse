@@ -89,19 +89,19 @@ exports.getProductById = (req, res, next) => {
 
    //---------Sequelize-------------//
 
-   Product.findByPk(productId).then(
-      product => {
-         res.render('shop/product-detail',
-            {
-               product: product,
-               pageTitle: product.title,
-               path: `product/${product.id}`
-            })
-      }
-   ).catch(err => console.log("Error find By PK : ", err, "-------------->>>>>>>"))
+   // Product.findByPk(productId).then(
+   //    product => {
+   //       res.render('shop/product-detail',
+   //          {
+   //             product: product,
+   //             pageTitle: product.title,
+   //             path: `product/${product.id}`
+   //          })
+   //    }
+   // ).catch(err => console.log("Error find By PK : ", err, "-------------->>>>>>>"))
 
 
-   //-----------Second manner to perform find--------//
+   //-----------Second manner to perform find in Sequelize--------//
 
    // Product.findAll({ where: {
    //    id: productId
@@ -116,6 +116,23 @@ exports.getProductById = (req, res, next) => {
    //  }).catch(err => console.log(err, "------------->>>"));
 
 
+   //---------------Mongo DB----------------//
+
+
+   Product.findById(productId)
+   .then(product =>{
+
+      res.render('shop/product-detail',
+      {
+         product: product,
+         pageTitle: product.title,
+         path: `product/${products.id}`
+      })
+
+   })
+   .catch(err => {
+      console.log(err);
+   })
 
 };
 
