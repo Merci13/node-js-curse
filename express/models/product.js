@@ -188,7 +188,7 @@ class Product {
 
         if (this._id) {
             //update the product in the MongoDB
-            dbOp.collection('products')
+            dbOp = db.collection('products')
             .updateOne(
                 { _id: new mongodb.ObjectId(this._id) }
                 , {$set: this});
