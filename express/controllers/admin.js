@@ -198,7 +198,7 @@ exports.postEditProduct = (req, res, next) => {
 
     product.save()
     .then(result =>{
-        console.log("Updated Product, Id: ", result.id);
+      //  console.log("Updated Product, Id: ", result._id);
         res.redirect('/products');
     })
     .catch(err => {
