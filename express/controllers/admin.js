@@ -37,18 +37,36 @@ exports.postAddProduct = (req, res, next) => {
 
     //----------------Sequelize-------------//
 
-    req.user.createProduct({
-        title: title,
-        imageUrl: image,
-        price: price,
-        description: description,
+    // req.user.createProduct({
+    //     title: title,
+    //     imageUrl: image,
+    //     price: price,
+    //     description: description,
         
-    })
-    .then(result => {
-        console.log("Created product ID:", result['dataValues']['id'], "---------------->>>>>");
-        res.redirect("admin-products")
-    })
-    .catch(err => console.log(err, "--------------->>>>>"));
+    // })
+    // .then(result => {
+    //     console.log("Created product ID:", result['dataValues']['id'], "---------------->>>>>");
+    //     res.redirect("admin-products")
+    // })
+    // .catch(err => console.log(err, "--------------->>>>>"));
+
+    //------------MongoDB----------------------------//
+    const product = new Product(
+        title,
+        price,
+        description, 
+        image,
+        );
+
+        product.save()
+        .then( result => {
+            console.log("Created product ID:", result['dataValues']['id'], "---------------->>>>>");
+            res.redirect("admin-products");
+        })
+        .catch( err => {
+            console.log('Error in admin.js in controller. Error: ', err, '------------->>');
+        });
+
 
 
 };

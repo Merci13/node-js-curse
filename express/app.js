@@ -5,7 +5,7 @@ const express = require('express');
 const bodyParser = require('body-parser');//package to help getting data from request
 //const expressHbs = require('express-handlebars');
 const errorController = require('./controllers/error');
-const mongoConnect = require('./utils/database');
+const mongoConnect = require('./utils/database').mongoConnect;
 
 //----------------Sequelize----------------------//
 // const sequelize = require('./utils/database');//this will be the pool for conections
@@ -55,7 +55,7 @@ app.use((req, res, next) => {
     //  })
     // .catch(err => { console.log("Error: ", err, "----------------->>>") });
 
-
+    next();
 
 });
 
