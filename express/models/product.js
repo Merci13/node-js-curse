@@ -177,7 +177,7 @@ class Product {
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
-        this._id = new mongodb.ObjectId(id);
+        this._id = id ? new mongodb.ObjectId(id): null;
 
     }
 
@@ -234,6 +234,20 @@ class Product {
             .catch(err => {
                 console.log('Error trying to Fetch Produc By Id in product.js. Error: ', err, ' -------------->>>>')
             });
+    }
+
+    static deleteById(productId){
+        const db = getDb();
+        
+        db.collection('products')
+        .deleteOne({_id: new mongodb.ObjectId(productId)})
+        .then(result => {
+            console.log("DELETED -------->>>");
+        })
+        .catch(err => {
+            console.log("Error in product.js in deleteById Method. Error: ", err , "-------------->>>");
+        });
+
     }
 
 }
