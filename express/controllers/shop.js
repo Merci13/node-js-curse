@@ -126,7 +126,7 @@ exports.getProductById = (req, res, next) => {
       {
          product: product,
          pageTitle: product.title,
-         path: `product/${products.id}`
+         path: `product/${product.id}`
       })
 
    })
