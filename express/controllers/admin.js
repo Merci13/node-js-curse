@@ -60,7 +60,7 @@ exports.postAddProduct = (req, res, next) => {
 
         product.save()
         .then( result => {
-            console.log("Created product ID:", result['dataValues']['id'], "---------------->>>>>");
+            console.log("Created product ID:", result);
             res.redirect("admin-products");
         })
         .catch( err => {

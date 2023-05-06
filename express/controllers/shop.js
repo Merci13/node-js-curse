@@ -120,21 +120,22 @@ exports.getIndex = (req, res, nex) => {
    //    }).catch(err => {
    //       console.log(err, "------------>>>")
    //    });
+  
    //--------Sequelize------------//
 
-   Product.findAll().then(products => {
-      console.log("Products: ---------------------------_>>>>", products);
+   // Product.findAll().then(products => {
+   //    console.log("Products: ---------------------------_>>>>", products);
 
-      res.render('shop/index',
-         {
-            prod: products,
-            pageTitle: 'Shop',
-            path: '/',
-            activeShop: true,
+   //    res.render('shop/index',
+   //       {
+   //          prod: products,
+   //          pageTitle: 'Shop',
+   //          path: '/',
+   //          activeShop: true,
 
-         });
+   //       });
 
-   }).catch(err => console.log(err, "Error Fetchin All --------->>>>>"));
+   // }).catch(err => console.log(err, "Error Fetchin All --------->>>>>"));
 
 
 
@@ -173,27 +174,27 @@ exports.getCart = (req, res, next) => {
 
    //---------------Sequelize----------------//
 
-   req.user.getCart()
-      .then(cart => {
-         return cart.getProducts().then(products => {
+   // req.user.getCart()
+   //    .then(cart => {
+   //       return cart.getProducts().then(products => {
 
 
-            res.render('shop/cart', {
-               path: '/cart',
-               title: "Your Cart",
-               pageTitle: "Cart",
-               products: products
-            });
+   //          res.render('shop/cart', {
+   //             path: '/cart',
+   //             title: "Your Cart",
+   //             pageTitle: "Cart",
+   //             products: products
+   //          });
 
-         }).catch(err => {
+   //       }).catch(err => {
 
-            console.log("Error in Method getProducts, Error: ", err, "---------------->>>>");
-         });
-      })
-      .catch(err => {
+   //          console.log("Error in Method getProducts, Error: ", err, "---------------->>>>");
+   //       });
+   //    })
+   //    .catch(err => {
 
-         console.log("Error in Method getCart, Error: ", err, "---------------->>>>");
-      })
+   //       console.log("Error in Method getCart, Error: ", err, "---------------->>>>");
+   //    })
 
 
 
@@ -238,61 +239,61 @@ exports.postCart = (req, res, next) => {
 
    //-----------------Sequelize----------------//
 
-   let fetchedCart;
+   // let fetchedCart;
 
-   let newQuantity = 1;
+   // let newQuantity = 1;
 
-   req.user
-      .getCart()
-      .then(cart => {
-         fetchedCart = cart;
-         return cart.getProducts({ where: { id: productId } });
-      })
-      .then(products => {
-         let product;
-         if (products.length > 0) {
+   // req.user
+   //    .getCart()
+   //    .then(cart => {
+   //       fetchedCart = cart;
+   //       return cart.getProducts({ where: { id: productId } });
+   //    })
+   //    .then(products => {
+   //       let product;
+   //       if (products.length > 0) {
 
-            product = products[0];
-         }
-         if (product) {
+   //          product = products[0];
+   //       }
+   //       if (product) {
 
-            const oldQuantity = product.cartItem.quantity;
-            newQuantity = oldQuantity + 1;
-            return product;
+   //          const oldQuantity = product.cartItem.quantity;
+   //          newQuantity = oldQuantity + 1;
+   //          return product;
 
-         }
-         //adding to the cart as new product
+   //       }
+   //       //adding to the cart as new product
 
-         return Product.findByPk(productId)
+   //       return Product.findByPk(productId)
 
 
-      })
-      .then(product => {
-         return fetchedCart.addProduct(
-            product, {
-            through: {
-               quantity: newQuantity
-            }
-         }
-         );
-      })
-      .then(() => {
+   //    })
+   //    .then(product => {
+   //       return fetchedCart.addProduct(
+   //          product, {
+   //          through: {
+   //             quantity: newQuantity
+   //          }
+   //       }
+   //       );
+   //    })
+   //    .then(() => {
 
-         //toDo here will crash beacouse we are expecting an array of products (cartProducts)
+   //       //toDo here will crash beacouse we are expecting an array of products (cartProducts)
 
-         // res.render('shop/cart', {
-         //    path: '/cart',
-         //    title: "Your Cart",
-         //    pageTitle: "Cart",
-         //    products: cartProducts
-         // });
+   //       // res.render('shop/cart', {
+   //       //    path: '/cart',
+   //       //    title: "Your Cart",
+   //       //    pageTitle: "Cart",
+   //       //    products: cartProducts
+   //       // });
 
-         res.redirect('/cart');
-      })
-      .catch(err => {
+   //       res.redirect('/cart');
+   //    })
+   //    .catch(err => {
 
-         console.log("Error in Method getCart, Error: ", err, "---------------->>>>");
-      });
+   //       console.log("Error in Method getCart, Error: ", err, "---------------->>>>");
+   //    });
 
 };
 
@@ -308,22 +309,22 @@ exports.postCartDeleteProduct = (req, res, next) => {
 
    //--------------Sequelize-----------------//
 
-   req.user.getCart()
-      .then(cart => {
-         return cart.getProducts({ where: { id: productId } });
-      })
-      .then(products => {
-         const product = products[0];
+   // req.user.getCart()
+   //    .then(cart => {
+   //       return cart.getProducts({ where: { id: productId } });
+   //    })
+   //    .then(products => {
+   //       const product = products[0];
 
-         return product.cartItem.destroy();
+   //       return product.cartItem.destroy();
 
-      })
-      .then(result => {
-         res.redirect('/cart');
-      })
-      .catch(err => {
-         console.log("Error in Method getCart, Error: ", err, "---------------->>>>");
-      })
+   //    })
+   //    .then(result => {
+   //       res.redirect('/cart');
+   //    })
+   //    .catch(err => {
+   //       console.log("Error in Method getCart, Error: ", err, "---------------->>>>");
+   //    })
 
 }
 

@@ -180,7 +180,7 @@ class Product {
     }
 
     save(){
-            const db = getDb;
+            const db = getDb();
 
            return db.collection('products').insertOne(this)
             .then( result => {

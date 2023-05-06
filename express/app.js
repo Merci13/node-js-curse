@@ -31,7 +31,7 @@ app.set('views', 'views');//say to node where are this template
 
 //ToDo in the future we will update this routes to work with MongoDB
  const adminRoutes = require('./routes/admin');
-// const shopRoutes = require('./routes/shop');
+ const shopRoutes = require('./routes/shop');
 
 
 
@@ -68,8 +68,6 @@ app.use(
     // '/add-product', 
     adminRoutes);
 app.use(shopRoutes);
-
-
 
 app.use(errorController.get404);
 
