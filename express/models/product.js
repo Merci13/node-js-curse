@@ -117,9 +117,9 @@
 //         //     callBack(product);
 //         // });
 //         //-------------------------------------------------------------------------------------//
-    
+
 //         return database.execute('SELECT * FROM products WHERE products.id = ?', [id]);
-    
+
 //     }
 
 // }
@@ -170,22 +170,22 @@ const getDb = require('../utils/database').getDb;
 
 class Product {
 
-    constructor(title, price, description, imageUrl ){
+    constructor(title, price, description, imageUrl) {
 
-        this.title =title;
+        this.title = title;
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
 
     }
 
-    save(){
-            const db = getDb();
+    save() {
+        const db = getDb();
 
-           return db.collection('products').insertOne(this)
-            .then( result => {
+        return db.collection('products').insertOne(this)
+            .then(result => {
 
-                console.log( result );
+                console.log(result);
             })
             .catch(err => {
                 console.log('Error trying to Insert Product in product.js. Error: ', err, ' -------------->>>>');
@@ -194,15 +194,17 @@ class Product {
 
     static fetchAll() {
         const db = getDb();
-        
+
         return db.collection('products')
-        .find()
-        .toArray()
-        .then(products =>{
-            console.log(products);
-            return products;
-        })
-        .catch('Error trying to FetchAll Products in product.js. Error: ', err, ' -------------->>>>');
+            .find()
+            .toArray()
+            .then(products => {
+                console.log(products);
+                return products;
+            })
+            .catch(err => {
+                console.log('Error trying to FetchAll Products in product.js. Error: ', err, ' -------------->>>>')
+            });
     }
 
 }
