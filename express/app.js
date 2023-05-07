@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');//package to help getting data from re
 //const expressHbs = require('express-handlebars');
 const errorController = require('./controllers/error');
 const mongoConnect = require('./utils/database').mongoConnect;
+const User = require('./models/user');
 
 //----------------Sequelize----------------------//
 // const sequelize = require('./utils/database');//this will be the pool for conections
@@ -55,7 +56,15 @@ app.use((req, res, next) => {
     //  })
     // .catch(err => { console.log("Error: ", err, "----------------->>>") });
 
-    next();
+    //-----MongoDB----//
+    User.findingUserById(1)
+    .then(user => {
+        req.user = user;
+        next();
+     })
+    .catch(err => { console.log("Error: ", err, "----------------->>>") });
+
+    //next();
 
 });
 
@@ -67,7 +76,7 @@ app.use((req, res, next) => {
 app.use(
     // '/add-product', 
     adminRoutes);
-    
+
 app.use(shopRoutes);
 
 app.use(errorController.get404);
@@ -128,5 +137,6 @@ app.use(errorController.get404);
 //-------------------------MONGO DB --------------------------------//
 
 mongoConnect(() => {
+    
     app.listen(3000);
 });
