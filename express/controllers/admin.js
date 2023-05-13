@@ -58,9 +58,12 @@ exports.postAddProduct = (req, res, next) => {
         price,
         description,
         image,
+        null, 
+        req.user._id
     );
 
-    product.save()
+    product
+    .save()
         .then(result => {
             console.log("Created product ID:", result);
             res.redirect("admin-products");

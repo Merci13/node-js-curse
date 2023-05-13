@@ -27,29 +27,61 @@
 
 //--------------------MongoDB----------------//
 const mongodb = require('mongodb');
- const getDb = require('../utils/database').getDb;
+const getDb = require('../utils/database').getDb;
 
- const ObjectId = mongodb.ObjectId;
+const ObjectId = mongodb.ObjectId;
 
 
 
 class User {
 
-    constructor(username, email, id){
+    constructor(username, email, id, cart) {
 
         this.username = username;
         this.email = email;
         this._id = id ? new ObjectId(id) : null;
+        this.cart = cart;
     }
 
-    save(){
+    save() {
         const db = getDb();
         return db.collection('users').insertOne(this);
     }
 
-    static findingUserById(userId){
+    static findingUserById(userId) {
         const db = getDb();
-        return db.collection('users').findOne({_id: new ObjectId(userId)});
+        return db.collection('users')
+            .findOne({ _id: new ObjectId(userId) })
+            .then(user => {
+                console.log(user);
+                return user;
+            })
+            .catch(err => {
+                console.log("Error in user.js file in findingUserById Method. Error: ", err, " ----------------------->>>");
+            });
+    }
+
+    addToCart(product) {
+
+        // const cartProducts = this.cart.findIndex( cp => {
+        //     return cp._id === product._id;
+
+
+        // });
+        const updatedCart = {
+            items: [
+                { ...product, quantity: 1 }
+
+            ]
+        };
+
+        const db = getDb();
+        return db.collection('users')
+            .updateOne(
+                { _id: this._id },
+                { $set: { cart: updatedCart } }
+            );
+
     }
 
 

@@ -57,9 +57,9 @@ app.use((req, res, next) => {
     // .catch(err => { console.log("Error: ", err, "----------------->>>") });
 
     //-----MongoDB----//
-    User.findingUserById(1)
+    User.findingUserById("6457b588ea161f122e26ab4e")
     .then(user => {
-        req.user = user;
+        req.user = new User(user.name, user.email, user._id, user.cart);
         next();
      })
     .catch(err => { console.log("Error: ", err, "----------------->>>") });

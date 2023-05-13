@@ -343,6 +343,21 @@ exports.postCart = (req, res, next) => {
    //       console.log("Error in Method getCart, Error: ", err, "---------------->>>>");
    //    });
 
+   //-----------------MongoDB--------------------------//
+
+      Product.findById(productId)
+      .then(product => {
+         return req.user.addToCart(product);
+      })
+      .then(result =>{
+         console.log(result);
+      })
+      .catch(err =>{
+         console
+         .log("Error in shop.js in Product.findById method in postCart Method. Error: ", err, " ----------------------->>>");
+      })
+
+
 };
 
 exports.postCartDeleteProduct = (req, res, next) => {
