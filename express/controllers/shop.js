@@ -409,6 +409,16 @@ exports.postCartDeleteProduct = (req, res, next) => {
    //       console.log("Error in Method getCart, Error: ", err, "---------------->>>>");
    //    })
 
+   // ---------MongoDB ---------------//
+
+   req.user.deleteItemFromCart(productId)
+   .then( result => {
+      res.redirect('/cart');
+   })
+   .catch(err =>{
+      console.log("Error in deleteItemFromCart method in shop.js. Error: ", err, "------------->>>>>");
+   })
+
 }
 
 exports.postOrder = (req, res, next) => {
