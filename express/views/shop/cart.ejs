@@ -12,9 +12,10 @@
 
                      <li>
                         <p>
-                           <%= p.title %> (<%= p.cartItem.quantity %>)
+                           <%= p.title %> (<%= p.quantity %>)
                                  <form action="/cart-delete-item" method="POST">
-                                    <input type="hidden" , value="<%= p.id %>" name="productId">
+                                    <!-- For MongoDB use p._id instead of p.id -->
+                                    <input type="hidden" , value="<%= p._id %>" name="productId">
 
                                     <button class="button" type="submit"> Delete</button>
 

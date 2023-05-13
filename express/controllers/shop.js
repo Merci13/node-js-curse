@@ -54,22 +54,22 @@ exports.getProducts = (req, res, next) => {
    //       });
 
    // }).catch(err => console.log(err, "Error Fetchin All --------->>>>>"));
-   
+
    //----------Mongo-------------//
    Product.fetchAll()
-   .then(products =>{
-      res.render('shop/product-list',
-      {
-         prod: products,
-         pageTitle: 'All Products',
-         path: '/products',
-         activeShop: true,
-      }
-      );
-   })
-   .catch(err =>{
-      console.log(err, "Error Fetchin All --------->>>>>")
-   });
+      .then(products => {
+         res.render('shop/product-list',
+            {
+               prod: products,
+               pageTitle: 'All Products',
+               path: '/products',
+               activeShop: true,
+            }
+         );
+      })
+      .catch(err => {
+         console.log(err, "Error Fetchin All --------->>>>>")
+      });
 
 
 };
@@ -120,19 +120,19 @@ exports.getProductById = (req, res, next) => {
 
 
    Product.findById(productId)
-   .then(product =>{
+      .then(product => {
 
-      res.render('shop/product-detail',
-      {
-         product: product,
-         pageTitle: product.title,
-         path: `product/${product.id}`
+         res.render('shop/product-detail',
+            {
+               product: product,
+               pageTitle: product.title,
+               path: `product/${product.id}`
+            })
+
       })
-
-   })
-   .catch(err => {
-      console.log(err);
-   })
+      .catch(err => {
+         console.log(err);
+      })
 
 };
 
@@ -153,7 +153,7 @@ exports.getIndex = (req, res, nex) => {
    //    }).catch(err => {
    //       console.log(err, "------------>>>")
    //    });
-  
+
    //--------Sequelize------------//
 
    // Product.findAll().then(products => {
@@ -172,19 +172,19 @@ exports.getIndex = (req, res, nex) => {
 
    //----------Mongo-------------//
    Product.fetchAll()
-   .then(products =>{
-      res.render('shop/index',
-      {
-         prod: products,
-         pageTitle: 'Shop',
-         path: '/',
-         activeShop: true,
-      }
-      );
-   })
-   .catch(err =>{
-      console.log(err, "Error Fetchin All in getIndex Method --------->>>>>")
-   });
+      .then(products => {
+         res.render('shop/index',
+            {
+               prod: products,
+               pageTitle: 'Shop',
+               path: '/',
+               activeShop: true,
+            }
+         );
+      })
+      .catch(err => {
+         console.log(err, "Error Fetchin All in getIndex Method --------->>>>>")
+      });
 
 
 };
@@ -243,7 +243,25 @@ exports.getCart = (req, res, next) => {
 
    //       console.log("Error in Method getCart, Error: ", err, "---------------->>>>");
    //    })
+   // --------------Mongo DB --------------------//
 
+   req.user
+      .getCart()
+      .then(products => {
+         
+
+            res.render('shop/cart', {
+               path: '/cart',
+               title: "Your Cart",
+               pageTitle: "Cart",
+               products: products
+            });
+
+         
+
+      }).catch(err => {
+         console.log("Error in shop.js file in getCart method. Error: ", err, " ------------------>>>");
+      })
 
 
 
@@ -345,16 +363,18 @@ exports.postCart = (req, res, next) => {
 
    //-----------------MongoDB--------------------------//
 
-      Product.findById(productId)
+   Product.findById(productId)
       .then(product => {
-         return req.user.addToCart(product);
+        return  req.user.addToCart(product);
+          
       })
-      .then(result =>{
+      .then(result => {
          console.log(result);
+         res.redirect('/cart');
       })
-      .catch(err =>{
+      .catch(err => {
          console
-         .log("Error in shop.js in Product.findById method in postCart Method. Error: ", err, " ----------------------->>>");
+            .log("Error in shop.js in Product.findById method in postCart Method. Error: ", err, " ----------------------->>>");
       })
 
 
@@ -403,7 +423,7 @@ exports.postOrder = (req, res, next) => {
       .then(products => {
          return req.user.createOrder()
             .then(order => {
-              return  order.addProducts(products.map(product => {
+               return order.addProducts(products.map(product => {
                   product.orderItem = { quantity: product.cartItem.quantity };
 
                   return product;
@@ -417,10 +437,10 @@ exports.postOrder = (req, res, next) => {
       })
       .then(result => {
 
-          return   fetchedCart.setProducts(null);
-         
+         return fetchedCart.setProducts(null);
+
       })
-      .then(result =>{
+      .then(result => {
          res.redirect('/orders');
       })
       .catch(err => {
@@ -443,22 +463,22 @@ exports.getCheckout = (req, res, next) => {
 
 exports.getOrders = (req, res, next) => {
 
-   req.user.getOrders({include: ['products']})
-   .then(orders => {
+   req.user.getOrders({ include: ['products'] })
+      .then(orders => {
 
-      const order = orders[0];
+         const order = orders[0];
 
-      res.render('shop/orders', {
-         title: "Orders",
-         path: '/orders',
-         pageTitle: 'Orders',
-         orders: orders
+         res.render('shop/orders', {
+            title: "Orders",
+            path: '/orders',
+            pageTitle: 'Orders',
+            orders: orders
+         });
+
+      })
+      .catch(err => {
+
+         console.log("Error in Method getOrders, Error: ", err, "---------------->>>>");
       });
-
-   })
-   .catch(err =>{
-      
-      console.log("Error in Method getOrders, Error: ", err, "---------------->>>>");
-   });
 
 }

@@ -16,7 +16,7 @@ router.get('/products', shopController.getProducts);
 
  router.get('/products/:productId', shopController.getProductById); //the ":" tell to express.js that before that there is not a path 
 
-// router.get('/cart', shopController.getCart);
+ router.get('/cart', shopController.getCart);
 
  router.post('/cart', shopController.postCart);
 
