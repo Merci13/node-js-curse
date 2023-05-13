@@ -70,7 +70,7 @@ class User {
         // });
         const updatedCart = {
             items: [
-                { ...product, quantity: 1 }
+                { productId: new ObjectId(product._id), quantity: 1 }
 
             ]
         };
