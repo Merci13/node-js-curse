@@ -136,9 +136,19 @@ class User {
 
     addOrder(){
         const db = getDb();
+       return this.getCart().then(products => {
 
-        return db.collection('orders')
-        .insertOne(this.cart)
+            const order ={
+                items: products,
+                user: {
+                    _id: new ObjectId(this._id),
+                    name: this.name,
+                    email: this.email
+                }
+            };
+            return db.collection('orders')
+            .insertOne(order);
+        })
         .then(result =>{
             this.cart = {items: []}
            return db.collection('users')
@@ -157,6 +167,13 @@ class User {
         .catch(err => {
             console.log("Error in addOrder in users.js fiel. Error: ", err, "---------->>>>");
         });
+    }
+
+    getOrders(){
+
+
+        const db = getDb();
+           // return db.collection('orders').
     }
 
 
