@@ -41,7 +41,7 @@ let _db;
 
 const mongoConnect = (callBack) => {
 
-    //Connect 
+    //Connect  mongodb+srv://mrjorxe:<password>@nodejsproyect.kfi6ldo.mongodb.net/
     MongoClient.connect('mongodb+srv://mrjorxe:6WGskEOsiBdWVqzW@nodejsproyect.kfi6ldo.mongodb.net/?retryWrites=true&w=majority')
         .then(client => {
             console.log('CONNECTED ------------>>>>>');

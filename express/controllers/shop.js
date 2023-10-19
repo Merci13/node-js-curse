@@ -487,23 +487,39 @@ exports.getCheckout = (req, res, next) => {
 }
 
 exports.getOrders = (req, res, next) => {
+   //----Sequelize------//
 
-   req.user.getOrders({ include: ['products'] })
-      .then(orders => {
+   // req.user.getOrders({ include: ['products'] })
+   //    .then(orders => {
 
-         const order = orders[0];
+   //       const order = orders[0];
 
-         res.render('shop/orders', {
-            title: "Orders",
-            path: '/orders',
-            pageTitle: 'Orders',
-            orders: orders
-         });
+   //       res.render('shop/orders', {
+   //          title: "Orders",
+   //          path: '/orders',
+   //          pageTitle: 'Orders',
+   //          orders: orders
+   //       });
 
-      })
-      .catch(err => {
+   //    })
+   //    .catch(err => {
 
-         console.log("Error in Method getOrders, Error: ", err, "---------------->>>>");
+   //       console.log("Error in Method getOrders, Error: ", err, "---------------->>>>");
+   //    });
+
+   //----Mongo DB------//
+
+   req.user.getOrders()
+   .then( orders => {
+      res.render('shop/orders', {
+         title: "Orders",
+         path: '/orders',
+         pageTitle: 'Orders',
+         orders: orders
       });
+   })
+   .catch(err => {
+      console.log("Error in Method getOrders, Error: ", err, "---------------->>>>");
+   });
 
 }

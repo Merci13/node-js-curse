@@ -13,15 +13,16 @@
           <h1>No Orders Yet!</h1>
           <% }else { %>
                     <ul>
-                         <% orders.foreEach(order => {   %>
+                         <% orders.forEach(order => {   %>
                                    <li>
-                                       <h1> <%= order.id %></h1>      
+                                       <h1> <%= order._id %></h1>      
                                        <ul>
-
-                                         <% order.products.foreEach(product => {   %>
+                                        <!--For Squelize use order.products insted of order.items  -->
+                                         <% order.items.forEach(product => {   %> 
                                              
                                              <li> 
-                                                  <%= product.title %> (<%= product.orderItem.quantity) %>
+                                                  <!-- For Sequelize use product.orderItem.quantity insted of product.quantity -->
+                                                  <%= product.title %> (<%= product.quantity %>)
                                              </li>
                                              <% });%>
                                        </ul>
