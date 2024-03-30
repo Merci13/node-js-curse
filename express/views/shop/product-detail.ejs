@@ -19,7 +19,9 @@
        <p><%= product.price %></p>
        <h2>Product Description</h2>
        <p><%= product.description%></p>
-       <%- include('../includes/add-to-cart.ejs') %>
+       <% if (isAuthenticated) {%>
+        <%- include('../includes/add-to-cart.ejs', {product: product}) %>
+        <% } %>
 
 
 

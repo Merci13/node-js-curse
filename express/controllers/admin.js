@@ -12,7 +12,8 @@ exports.getAddProduct = (req, res, next) => {
         {
             pageTitle: 'Add Product',
             path: '/add-product',
-            editing: false
+            editing: false,
+            isAuthenticated: req.session.isLoggedIn
 
         });
 
@@ -25,7 +26,7 @@ exports.postAddProduct = (req, res, next) => {
     //products.push({ title: req.body.title });
 
     const title = req.body.title.trim();
-    const image = req.body.imageUrl;
+    const imageUrl = req.body.imageUrl;
     const price = req.body.price;
 
     const description = req.body.description.trim();
@@ -53,14 +54,24 @@ exports.postAddProduct = (req, res, next) => {
     // .catch(err => console.log(err, "--------------->>>>>"));
 
     //------------MongoDB----------------------------//
-    const product = new Product(
-        title,
-        price,
-        description,
-        image,
-        null, 
-        req.user._id
-    );
+    // const product = new Product(
+    //     title,
+    //     price,
+    //     description,
+    //     image,
+    //     null, 
+    //     req.user._id
+    // );
+    //------------Mongoose----------------------------//
+    const product = new Product({
+        title:title, 
+        price: price, 
+        description: description,
+        imageUrl: imageUrl,
+       // userId: req.user //moogose will extract the user id
+         userId: req.user  
+    } );
+
 
     product
     .save()
@@ -136,27 +147,51 @@ exports.getEditProduct = (req, res, next) => {
 
     //----------MongoDB -------------------//
 
+    // Product.findById(productId)
+    //     .then(product => {
+
+
+    //         if (!product) {
+    //             return res.redirect('/');
+    //         }
+    //         res.render(
+    //             'admin/edit-product',
+    //             {
+    //                 pageTitle: 'Edit Product',
+    //                 path: '/edit-product',
+    //                 editing: editMode,
+    //                 product: product
+
+
+    //             });
+    //     })
+    //     .catch(err => {
+    //         console.log("Error in admin.js in getEditProduct Method. Error: ", err, " --------------------->>");
+    //     })
+         //----------Mongoose -------------------//
+
     Product.findById(productId)
-        .then(product => {
+    .then(product => {
 
 
-            if (!product) {
-                return res.redirect('/');
-            }
-            res.render(
-                'admin/edit-product',
-                {
-                    pageTitle: 'Edit Product',
-                    path: '/edit-product',
-                    editing: editMode,
-                    product: product
+        if (!product) {
+            return res.redirect('/');
+        }
+        res.render(
+            'admin/edit-product',
+            {
+                pageTitle: 'Edit Product',
+                path: '/edit-product',
+                editing: editMode,
+                product: product,
+                isAuthenticated: req.session.isLoggedIn
 
 
-                });
-        })
-        .catch(err => {
-            console.log("Error in admin.js in getEditProduct Method. Error: ", err, " --------------------->>");
-        })
+            });
+    })
+    .catch(err => {
+        console.log("Error in admin.js in getEditProduct Method. Error: ", err, " --------------------->>");
+    })
 
 
 
@@ -190,22 +225,40 @@ exports.postEditProduct = (req, res, next) => {
 
 
     //------------MongoDB----------------------//
-    const product = new Product(
-        updateTitle,
-        updatePrice,
-        updateDescription,
-        updateImageUrl,
-        productId
-    );
+    // const product = new Product(
+    //     updateTitle,
+    //     updatePrice,
+    //     updateDescription,
+    //     updateImageUrl,
+    //     productId
+    // );
 
-    product.save()
-        .then(result => {
+    // product.save()
+    //     .then(result => {
+    //         //  console.log("Updated Product, Id: ", result._id);
+    //         res.redirect('/products');
+    //     })
+    //     .catch(err => {
+    //         console.log("Error in admin.js in postEditProduct Method. Error: ", err, " ---------------->>>>>>>");
+    //     })
+     //------------Mongoose----------------------//
+    
+
+     Product.findById(productId).then(product => {
+        product.title = updateTitle;
+        product.price = updatePrice;
+        product.description = updateDescription;
+        product.imageUrl = updateImageUrl;
+
+       return product.save();
+     }).then(result => {
             //  console.log("Updated Product, Id: ", result._id);
             res.redirect('/products');
         })
         .catch(err => {
             console.log("Error in admin.js in postEditProduct Method. Error: ", err, " ---------------->>>>>>>");
         })
+
 
 
 };
@@ -239,7 +292,35 @@ exports.getProducts = (req, res, nex) => {
 
     // }).catch(err => console.log('Error: ', err, "-------------------->>>>>>>>>>"));
 
-    Product.fetchAll()
+    //------------MongoDB----------------------//
+    // Product.fetchAll()
+    //     .then(products => {
+
+    //         res.render('admin/products',
+    //             {
+    //                 prod: products,
+    //                 pageTitle: 'Admin Product',
+    //                 path: '/admin-products',
+    //                 activeShop: true,
+
+    //             });
+
+    //     })
+    //     .catch(err => {
+    //         console.log("Error in admin.js in getProducts Method. Error: ", err, " ------------->>>>>");
+    //     })
+
+
+    //------------Mongoose---------------------//
+    Product.find()
+    //.select method allows to return only the data that we need, also, writing "-" in front of a data will remove from the data that we expect
+    // .select(
+    //     'title description -_id'
+    // )
+    //populate method allows to us to get all information from references 
+    // .populate(
+    //     'userId',
+    // )
         .then(products => {
 
             res.render('admin/products',
@@ -248,6 +329,7 @@ exports.getProducts = (req, res, nex) => {
                     pageTitle: 'Admin Product',
                     path: '/admin-products',
                     activeShop: true,
+                    isAuthenticated: req.session.isLoggedIn
 
                 });
 
@@ -281,12 +363,22 @@ exports.postDeleteProduct = (req, res, next) => {
 
     // -------------------MongoDB---------------//
 
-    Product.deleteById(prodId)
-    .then(result => {
-        res.redirect('/products');
-    })
-    .catch(err => {
-        console.log(err);
-    });
+    // Product.deleteById(prodId)
+    // .then(result => {
+    //     res.redirect('/products');
+    // })
+    // .catch(err => {
+    //     console.log(err);
+    // });
 
+        // -------------------Mongoose---------------//
+
+        Product.findByIdAndDelete(prodId)
+        .then(result => {
+            res.redirect('/products');
+        })
+        .catch(err => {
+            console.log(err);
+        });
+    
 } 

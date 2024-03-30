@@ -55,21 +55,37 @@ exports.getProducts = (req, res, next) => {
 
    // }).catch(err => console.log(err, "Error Fetchin All --------->>>>>"));
 
-   //----------Mongo-------------//
-   Product.fetchAll()
-      .then(products => {
-         res.render('shop/product-list',
-            {
-               prod: products,
-               pageTitle: 'All Products',
-               path: '/products',
-               activeShop: true,
-            }
-         );
-      })
-      .catch(err => {
-         console.log(err, "Error Fetchin All --------->>>>>")
-      });
+   //----------MongoDB-------------//
+   // Product.fetchAll()
+   //    .then(products => {
+   //       res.render('shop/product-list',
+   //          {
+   //             prod: products,
+   //             pageTitle: 'All Products',
+   //             path: '/products',
+   //             activeShop: true,
+   //          }
+   //       );
+   //    })
+   //    .catch(err => {
+   //       console.log(err, "Error Fetchin All --------->>>>>")
+   //    });
+      //----------Mongoose-------------//
+   Product.find()
+   .then(products => {
+      res.render('shop/product-list',
+         {
+            prod: products,
+            pageTitle: 'All Products',
+            path: '/products',
+            activeShop: true,
+            isAuthenticated: req.session.isLoggedIn
+         }
+      );
+   })
+   .catch(err => {
+      console.log(err, "Error Fetchin All --------->>>>>")
+   });
 
 
 };
@@ -119,22 +135,42 @@ exports.getProductById = (req, res, next) => {
    //---------------Mongo DB----------------//
 
 
-   Product.findById(productId)
-      .then(product => {
+   // Product.findById(productId)
+   //    .then(product => {
 
-         res.render('shop/product-detail',
-            {
-               product: product,
-               pageTitle: product.title,
-               path: `product/${product.id}`
-            })
+   //       res.render('shop/product-detail',
+   //          {
+   //             product: product,
+   //             pageTitle: product.title,
+   //             path: `product/${product.id}`
+   //          })
 
-      })
-      .catch(err => {
-         console.log(err);
-      })
+   //    })
+   //    .catch(err => {
+   //       console.log(err);
+   //    })
+
+   //---------------Mongoose----------------//
+
+
+   Product.findById(productId) //this findById method is belongs to mongoose 
+   .then(product => {
+
+      res.render('shop/product-detail',
+         {
+            product: product,
+            pageTitle: product.title,
+            path: `product/${product.id}`,
+            isAuthenticated: req.session.isLoggedIn
+         })
+
+   })
+   .catch(err => {
+      console.log(err);
+   })
 
 };
+
 
 
 exports.getIndex = (req, res, nex) => {
@@ -170,21 +206,38 @@ exports.getIndex = (req, res, nex) => {
 
    // }).catch(err => console.log(err, "Error Fetchin All --------->>>>>"));
 
-   //----------Mongo-------------//
-   Product.fetchAll()
-      .then(products => {
-         res.render('shop/index',
-            {
-               prod: products,
-               pageTitle: 'Shop',
-               path: '/',
-               activeShop: true,
-            }
-         );
-      })
-      .catch(err => {
-         console.log(err, "Error Fetchin All in getIndex Method --------->>>>>")
-      });
+   //----------MongoDB-------------//
+   // Product.fetchAll()
+   //    .then(products => {
+   //       res.render('shop/index',
+   //          {
+   //             prod: products,
+   //             pageTitle: 'Shop',
+   //             path: '/',
+   //             activeShop: true,
+   //          }
+   //       );
+   //    })
+   //    .catch(err => {
+   //       console.log(err, "Error Fetchin All in getIndex Method --------->>>>>")
+   //    });
+  //-------------Mongoose-----------------------//
+
+  Product.find()
+  .then(products => {
+     res.render('shop/index',
+        {
+           prod: products,
+           pageTitle: 'Shop',
+           path: '/',
+           activeShop: true,
+           isAuthenticated: req.session.isLoggedIn
+        }
+     );
+  })
+  .catch(err => {
+     console.log(err, "Error Fetchin All in getIndex Method --------->>>>>")
+  });
 
 
 };
@@ -243,28 +296,46 @@ exports.getCart = (req, res, next) => {
 
    //       console.log("Error in Method getCart, Error: ", err, "---------------->>>>");
    //    })
-   // --------------Mongo DB --------------------//
+    // --------------Mongo DB --------------------//
 
-   req.user
-      .getCart()
-      .then(products => {
+   // req.user
+   //    .getCart()
+   //    .then(products => {
          
 
+   //          res.render('shop/cart', {
+   //             path: '/cart',
+   //             title: "Your Cart",
+   //             pageTitle: "Cart",
+   //             products: products
+   //          });
+
+         
+
+   //    }).catch(err => {
+   //       console.log("Error in shop.js file in getCart method. Error: ", err, " ------------------>>>");
+   //    })
+
+   // --------------Mongoose--------------------//
+
+   req.user
+      .populate(
+         'cart.items.productId'
+      )
+      
+      .then(user => {
+         const products = user.cart.items;
             res.render('shop/cart', {
                path: '/cart',
                title: "Your Cart",
                pageTitle: "Cart",
-               products: products
+               products: products,
+               isAuthenticated: req.session.isLoggedIn
             });
-
-         
 
       }).catch(err => {
          console.log("Error in shop.js file in getCart method. Error: ", err, " ------------------>>>");
       })
-
-
-
 
 
 }
@@ -363,20 +434,35 @@ exports.postCart = (req, res, next) => {
 
    //-----------------MongoDB--------------------------//
 
-   Product.findById(productId)
-      .then(product => {
-        return  req.user.addToCart(product);
+   // Product.findById(productId)
+   //    .then(product => {
+   //      return  req.user.addToCart(product);
           
-      })
-      .then(result => {
-         console.log(result);
-         res.redirect('/cart');
-      })
-      .catch(err => {
-         console
-            .log("Error in shop.js in Product.findById method in postCart Method. Error: ", err, " ----------------------->>>");
-      })
+   //    })
+   //    .then(result => {
+   //       console.log(result);
+   //       res.redirect('/cart');
+   //    })
+   //    .catch(err => {
+   //       console
+   //          .log("Error in shop.js in Product.findById method in postCart Method. Error: ", err, " ----------------------->>>");
+   //    })
 
+         //-----------------Mongoose--------------------------//
+
+   Product.findById(productId)
+   .then(product => {
+     return  req.sessions.user.addToCart(product);
+       
+   })
+   .then(result => {
+      console.log(result);
+      res.redirect('/cart');
+   })
+   .catch(err => {
+      console
+         .log("Error in shop.js in Product.findById method in postCart Method. Error: ", err, " ----------------------->>>");
+   })
 
 };
 
@@ -411,14 +497,23 @@ exports.postCartDeleteProduct = (req, res, next) => {
 
    // ---------MongoDB ---------------//
 
-   req.user.deleteItemFromCart(productId)
-   .then( result => {
-      res.redirect('/cart');
-   })
-   .catch(err =>{
-      console.log("Error in deleteItemFromCart method in shop.js. Error: ", err, "------------->>>>>");
-   })
+   // req.user.deleteItemFromCart(productId)
+   // .then( result => {
+   //    res.redirect('/cart');
+   // })
+   // .catch(err =>{
+   //    console.log("Error in deleteItemFromCart method in shop.js. Error: ", err, "------------->>>>>");
+   // })
 
+     // ---------Mongoose ---------------//
+
+     req.user.removeFromCart(productId)
+     .then( result => {
+        res.redirect('/cart');
+     })
+     .catch(err =>{
+        console.log("Error in deleteItemFromCart method in shop.js. Error: ", err, "------------->>>>>");
+     })
 }
 
 exports.postOrder = (req, res, next) => {
@@ -460,19 +555,46 @@ exports.postOrder = (req, res, next) => {
 
    //-----------------MongoDB -----------------//
 
+   // req.user.addOrder()
 
-   let fetchedCart;
+   //    .then(result => {
+   //       console.log(result);
+   //       res.redirect('/orders');
+   //    })
+   //    .catch(err => {
 
-   req.user.addOrder()
+   //       console.log("Error in Method getCart, Error: ", err, "---------------->>>>");
+   //    })
 
-      .then(result => {
-         console.log(result);
-         res.redirect('/orders');
-      })
-      .catch(err => {
+      //-----------------Mongoose -----------------//
 
-         console.log("Error in Method getCart, Error: ", err, "---------------->>>>");
-      })
+req.user
+.populate('cart.items.productId')
+.then(user =>{
+   const products = user.cart.items.map( i => {
+      return {quantity: i.quantity, product: { ...i.productId._doc }};
+   });
+   const order = new Order({
+      user: {
+         name: req.user.name,
+         userId: req.user
+      },
+      products: products
+   });
+
+   return order.save();
+
+}).then(() => {
+
+      return  req.user.clearCart();
+      
+   }).then(() => {
+      res.redirect('/orders');
+   })
+   .catch(err => {
+
+      console.log("Error in Method getCart, Error: ", err, "---------------->>>>");
+   })
 
 };
 
@@ -481,7 +603,8 @@ exports.getCheckout = (req, res, next) => {
    res.render('shop/checkout', {
       title: "Checkout",
       path: '/checkout',
-      pageTitle: "ChekOut"
+      pageTitle: "ChekOut",
+      isAuthenticated: req.session.isLoggedIn
    });
 
 }
@@ -509,17 +632,31 @@ exports.getOrders = (req, res, next) => {
 
    //----Mongo DB------//
 
-   req.user.getOrders()
-   .then( orders => {
-      res.render('shop/orders', {
-         title: "Orders",
-         path: '/orders',
-         pageTitle: 'Orders',
-         orders: orders
-      });
-   })
-   .catch(err => {
-      console.log("Error in Method getOrders, Error: ", err, "---------------->>>>");
-   });
+   // req.user.getOrders()
+   // .then( orders => {
+   //    res.render('shop/orders', {
+   //       title: "Orders",
+   //       path: '/orders',
+   //       pageTitle: 'Orders',
+   //       orders: orders
+   //    });
+   // })
+   // .catch(err => {
+   //    console.log("Error in Method getOrders, Error: ", err, "---------------->>>>");
+   // });
+ //----Mongoose------//
 
+ Order.find({"user.userId": req.user._id})
+ .then( orders => {
+    res.render('shop/orders', {
+       title: "Orders",
+       path: '/orders',
+       pageTitle: 'Orders',
+       orders: orders,
+       isAuthenticated: req.session.isLoggedIn
+    });
+ })
+ .catch(err => {
+    console.log("Error in Method getOrders, Error: ", err, "---------------->>>>");
+ });
 }

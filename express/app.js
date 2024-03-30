@@ -4,8 +4,20 @@ const paht = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');//package to help getting data from request
 //const expressHbs = require('express-handlebars');
+//----------------Mongoose----------------------//
+const moongoose = require('mongoose');
+//----------------Mongoose----------------------//
+
+//---------------Sessions---------------------//
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
+//---------------Sessions---------------------//
+
+
 const errorController = require('./controllers/error');
-const mongoConnect = require('./utils/database').mongoConnect;
+//const mongoConnect = require('./utils/database').mongoConnect;
+
+
 const User = require('./models/user');
 
 //----------------Sequelize----------------------//
@@ -14,9 +26,14 @@ const User = require('./models/user');
 // const User = require('./models/user');
 
 
-
+const MONGO_DB_URI = 'mongodb+srv://mrjorxe:6WGskEOsiBdWVqzW@nodejsproyect.kfi6ldo.mongodb.net/shop?retryWrites=true&w=majority';
 
 const app = express();
+const store = new MongoDBStore({
+    uri: MONGO_DB_URI,
+    collection: 'sessions',
+  
+});
 
 //engines
 //app.set('view engine', 'pug');//say to node that we are using template engine and what we are using for.
@@ -31,8 +48,9 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');//say to node where are this template
 
 //ToDo in the future we will update this routes to work with MongoDB
- const adminRoutes = require('./routes/admin');
- const shopRoutes = require('./routes/shop');
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
 
 
 
@@ -43,11 +61,34 @@ const rootDir = require('./utils/path');
 // const Order = require('./models/order');
 // const OrderItem = require('./models/order-item');
 
-
+//-----------------MiddleWares-------------------//
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(paht.join(rootDir, 'public')));//take in mind that with this, the path start in the public folder
+app.use(session({
+    secret: 'my secret', //this secret has to be a long string value in production
+     resave: false,
+     saveUninitialized: false,
+     //you could configure your cookie here adding the value "cookie" and passing the js object with the configuration. example: cookie:{max-age: 10}
+    store: store
+    }));
 
-app.use((req, res, next) => {
+app.use((req, res, next) =>{
+    if(!req.session.user){
+       return next();
+    }
+
+   User.findById(req.session.user._id)
+        .then(user => {
+         req.user = user;
+        next();
+        })
+        .catch(err => { console.log("Error: ", err, "----------------->>>") });
+
+} );
+//-----------------MiddleWares-------------------//
+
+
+// app.use((req, res, next) => {
     //-----Sequelize------//
     // User.findByPk(1)
     // .then(user => {
@@ -57,16 +98,25 @@ app.use((req, res, next) => {
     // .catch(err => { console.log("Error: ", err, "----------------->>>") });
 
     //-----MongoDB----//
-    User.findingUserById("6457b588ea161f122e26ab4e")
-    .then(user => {
-        req.user = new User(user.name, user.email, user._id, user.cart);
-        next();
-     })
-    .catch(err => { console.log("Error: ", err, "----------------->>>") });
+    // User.findingUserById("6457b588ea161f122e26ab4e")
+    //     .then(user => {
+    //         req.user = new User(user.name, user.email, user._id, user.cart);
+    //         next();
+    //     })
+    //     .catch(err => { console.log("Error: ", err, "----------------->>>") });
 
-    //next();
+    //-----Mongoose----//
+    // User.findById("66072470824c4ed989c7afbc")
+    //     .then(user => {
+    //         req.user = user;
+    //         next();
+    //     })
+    //     .catch(err => { console.log("Error: ", err, "----------------->>>") });
 
-});
+
+
+
+// });
 
 
 /**
@@ -78,6 +128,8 @@ app.use(
     adminRoutes);
 
 app.use(shopRoutes);
+
+app.use(authRoutes);
 
 app.use(errorController.get404);
 
@@ -126,7 +178,7 @@ app.use(errorController.get404);
 //         // console.log(user);
 
 //         return user.createCart();
-        
+
 //     }).then( cart => {
 //         app.listen(3000);
 //     })
@@ -136,7 +188,33 @@ app.use(errorController.get404);
 
 //-------------------------MONGO DB --------------------------------//
 
-mongoConnect(() => {
-    
-    app.listen(3000);
-});
+// mongoConnect(() => {
+
+//     app.listen(3000);
+// });
+
+//----------------Mongoose----------------------//
+
+moongoose
+    .connect(MONGO_DB_URI)
+    .then(
+        result => {
+
+            User.findOne().then(user => {
+                if (!user) {
+                    const user = new User({
+                        name: "Test",
+                        email: "test@test.com",
+                        cart: { items: [] }
+
+                    });
+                    user.save();
+                }
+            });
+
+
+            app.listen(3000);
+        }
+    ).catch(err => {
+        console.log(err + '------------->>>>');
+    });

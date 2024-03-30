@@ -12,15 +12,27 @@
 
                      <li>
                         <p>
-                           <%= p.title %> (<%= p.quantity %>)
-                                 <form action="/cart-delete-item" method="POST">
+                           <!-- for mongoDb -->
+                           <!-- <%= p.title %> (<%= p.quantity %>) -->
+                                 <!-- <form action="/cart-delete-item" method="POST"> -->
                                     <!-- For MongoDB use p._id instead of p.id -->
-                                    <input type="hidden" , value="<%= p._id %>" name="productId">
+                                    <!-- <input type="hidden" , value="<%= p._id %>" name="productId"> -->
 
-                                    <button class="button" type="submit"> Delete</button>
+                                    <!-- <button class="button" type="submit"> Delete</button> -->
+                                    <!-- </form> -->
 
-                                 </form>
-                        </p>
+                                    <!-- For Moongose -->
+                                   <h1> <%= p.productId.title %> </h1>
+                                    <h2>Quantity: <%= p.quantity %></h2>
+                                    <form action="/cart-delete-item" method="POST">
+                                      
+                                       <input type="hidden" , value="<%= p.productId._id %>" name="productId">
+   
+                                       <button class="button" type="submit"> Delete</button>
+   
+                                    </form>
+
+                                 </p>
                      </li>
                      <% }) %>
                </ul>

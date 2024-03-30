@@ -25,8 +25,9 @@
                             <!-- For Mongo DB -->
                             <a href="/products/<%=product._id%>" class="btn">Details</a>
                             <!-- For Mongo DB -->
-
-                            <%- include('../includes/add-to-cart.ejs',  {product: product}) %>
+                            <% if (!isAuthenticated) {%>
+                                <%- include('../includes/add-to-cart.ejs',  {product: product}) %>
+                            <% } %>
                         </div>
                     </article>
                 <% }%>

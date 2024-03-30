@@ -166,91 +166,126 @@
 
 //--------------------------Using MongoDB------------------------//
 
-const mongodb = require('mongodb');
-const getDb = require('../utils/database').getDb;
+// const mongodb = require('mongodb');
+// const getDb = require('../utils/database').getDb;
 
-class Product {
+// class Product {
 
-    constructor(title, price, description, imageUrl, id, userId) {
+//     constructor(title, price, description, imageUrl, id, userId) {
 
-        this.title = title;
-        this.price = price;
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this._id = id ? new mongodb.ObjectId(id): null;
-        this.userId = userId;
+//         this.title = title;
+//         this.price = price;
+//         this.description = description;
+//         this.imageUrl = imageUrl;
+//         this._id = id ? new mongodb.ObjectId(id): null;
+//         this.userId = userId;
 
-    }
+//     }
 
-    save() {
+//     save() {
 
-        const db = getDb();
-        let dbOp;
+//         const db = getDb();
+//         let dbOp;
 
-        if (this._id) {
-            //update the product in the MongoDB
-            dbOp = db.collection('products')
-            .updateOne(
-                { _id: this._id }
-                , {$set: this});
+//         if (this._id) {
+//             //update the product in the MongoDB
+//             dbOp = db.collection('products')
+//             .updateOne(
+//                 { _id: this._id }
+//                 , {$set: this});
 
-        } else {
-            dbOp = db.collection('products').insertOne(this);
-        }
-        return dbOp
-            .then(result => {
+//         } else {
+//             dbOp = db.collection('products').insertOne(this);
+//         }
+//         return dbOp
+//             .then(result => {
 
-                console.log(result);
-            })
-            .catch(err => {
-                console.log('Error trying to Insert Product in product.js. Error: ', err, ' -------------->>>>');
-            });
+//                 console.log(result);
+//             })
+//             .catch(err => {
+//                 console.log('Error trying to Insert Product in product.js. Error: ', err, ' -------------->>>>');
+//             });
 
-    }
+//     }
 
-    static fetchAll() {
-        const db = getDb();
+//     static fetchAll() {
+//         const db = getDb();
 
-        return db.collection('products')
-            .find()
-            .toArray()
-            .then(products => {
-                console.log(products);
-                return products;
-            })
-            .catch(err => {
-                console.log('Error trying to FetchAll Products in product.js. Error: ', err, ' -------------->>>>')
-            });
-    }
+//         return db.collection('products')
+//             .find()
+//             .toArray()
+//             .then(products => {
+//                 console.log(products);
+//                 return products;
+//             })
+//             .catch(err => {
+//                 console.log('Error trying to FetchAll Products in product.js. Error: ', err, ' -------------->>>>')
+//             });
+//     }
 
-    static findById(prodId) {
-        const db = getDb();
-        return db.collection('products')
-            .find({ _id: new mongodb.ObjectId(prodId) })
-            .next()
-            .then(product => {
-                console.log(product, '--------------------->>>>');
-                return product;
-            })
-            .catch(err => {
-                console.log('Error trying to Fetch Produc By Id in product.js. Error: ', err, ' -------------->>>>')
-            });
-    }
+//     static findById(prodId) {
+//         const db = getDb();
+//         return db.collection('products')
+//             .find({ _id: new mongodb.ObjectId(prodId) })
+//             .next()
+//             .then(product => {
+//                 console.log(product, '--------------------->>>>');
+//                 return product;
+//             })
+//             .catch(err => {
+//                 console.log('Error trying to Fetch Produc By Id in product.js. Error: ', err, ' -------------->>>>')
+//             });
+//     }
 
-    static deleteById(productId){
-        const db = getDb();
+//     static deleteById(productId){
+//         const db = getDb();
         
-      return   db.collection('products')
-        .deleteOne({_id: new mongodb.ObjectId(productId)})
-        .then(result => {
-            console.log("DELETED -------->>>");
-            return result;
-        })
-        .catch(err => {
-            console.log("Error in product.js in deleteById Method. Error: ", err , "-------------->>>");
-        });
+//       return   db.collection('products')
+//         .deleteOne({_id: new mongodb.ObjectId(productId)})
+//         .then(result => {
+//             console.log("DELETED -------->>>");
+//             return result;
+//         })
+//         .catch(err => {
+//             console.log("Error in product.js in deleteById Method. Error: ", err , "-------------->>>");
+//         });
 
+//     }
+
+// }
+// module.exports = Product;
+
+//--------------------------Using Mongoose------------------------//
+
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const productSchema = new Schema({
+    title : {
+        type: String, 
+        require: true
+    }, 
+    price: {
+        type: Number, 
+        require: true
+    },
+    description: {
+        type: String,
+        require: true
+    },
+    imageUrl:{
+        type: String, 
+        require: true
+    },
+    userId:{
+        type: Schema.Types.ObjectId,
+        ref: 'User', //refers to the user model 
+        required: true
     }
 
-}
-module.exports = Product;
+});
+
+module.exports = mongoose.model('Product', productSchema); 
+//exports as "Product" representative of the productSchema
+// also, mongoose takes the show name (in this case "Product"), lower case that name and add an "s" to maked prural.
+//all this to added in the database 

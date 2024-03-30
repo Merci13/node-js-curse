@@ -5,5 +5,6 @@ exports.get404  = (req, res, next) =>{
     res.status(404);
   
 //    res.sendFile(paht.join(rootDir,'views','/not-found.html'));
-res.render('404', {path: '404'});
+res.render('404', {path: '404',
+isAuthenticated: req.session.isLoggedIn});
 };
