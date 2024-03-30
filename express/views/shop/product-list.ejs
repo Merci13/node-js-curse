@@ -27,8 +27,8 @@
                             <!-- For MongoDB use product._id insted of product.id -->
                             <a href="products/<%= product._id %>"><h1>Details</h1></a>
                             <% if (isAuthenticated) {%>
-                            <%- include('../includes/add-to-cart.ejs', {product: product}) %>
-                                <% } %>
+                                <%- include('../includes/add-to-cart.ejs', {product: product}) %>
+                             <% } %>
                         </div>
                     </article>
                 <% }%>
