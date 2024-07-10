@@ -79,7 +79,6 @@ exports.getProducts = (req, res, next) => {
             pageTitle: 'All Products',
             path: '/products',
             activeShop: true,
-            isAuthenticated: req.session.isLoggedIn
          }
       );
    })
@@ -161,7 +160,6 @@ exports.getProductById = (req, res, next) => {
             product: product,
             pageTitle: product.title,
             path: `product/${product.id}`,
-            isAuthenticated: req.session.isLoggedIn
          })
 
    })
@@ -231,7 +229,6 @@ exports.getIndex = (req, res, nex) => {
            pageTitle: 'Shop',
            path: '/',
            activeShop: true,
-           isAuthenticated: req.session.isLoggedIn
         }
      );
   })
@@ -330,7 +327,6 @@ exports.getCart = (req, res, next) => {
                title: "Your Cart",
                pageTitle: "Cart",
                products: products,
-               isAuthenticated: req.session.isLoggedIn
             });
 
       }).catch(err => {
@@ -576,7 +572,7 @@ req.user
    });
    const order = new Order({
       user: {
-         name: req.user.name,
+         email: req.user.email, 
          userId: req.user
       },
       products: products
@@ -604,7 +600,6 @@ exports.getCheckout = (req, res, next) => {
       title: "Checkout",
       path: '/checkout',
       pageTitle: "ChekOut",
-      isAuthenticated: req.session.isLoggedIn
    });
 
 }
@@ -653,7 +648,6 @@ exports.getOrders = (req, res, next) => {
        path: '/orders',
        pageTitle: 'Orders',
        orders: orders,
-       isAuthenticated: req.session.isLoggedIn
     });
  })
  .catch(err => {

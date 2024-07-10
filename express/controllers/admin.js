@@ -7,13 +7,13 @@ const Product = require("../models/product");
 
 exports.getAddProduct = (req, res, next) => {
     //res.sendFile(path.join(rootDir,'views', 'add-product.html'))//for routing with html 
+   
     res.render(
         'admin/edit-product',
         {
             pageTitle: 'Add Product',
             path: '/add-product',
-            editing: false,
-            isAuthenticated: req.session.isLoggedIn
+            editing: false
 
         });
 
@@ -184,7 +184,6 @@ exports.getEditProduct = (req, res, next) => {
                 path: '/edit-product',
                 editing: editMode,
                 product: product,
-                isAuthenticated: req.session.isLoggedIn
 
 
             });
@@ -329,7 +328,6 @@ exports.getProducts = (req, res, nex) => {
                     pageTitle: 'Admin Product',
                     path: '/admin-products',
                     activeShop: true,
-                    isAuthenticated: req.session.isLoggedIn
 
                 });
 

@@ -211,6 +211,8 @@ const userSchema = new Schema({
         type: String, 
         require: true
     },
+    resetToken: String,
+    resetTokenExpiration: Date,
     cart: {
         items: [{
             productId: { type: Schema.Types.ObjectId, ref: 'Product', require: true },

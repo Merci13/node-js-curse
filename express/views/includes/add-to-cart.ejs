@@ -3,6 +3,7 @@
 <form action="/cart" method="POST">
     <!-- For MongoDB use product._id instead of product.id -->
     <input type="hidden" name="productId" value="<%= product._id %>">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
     <button class="btn" type="submit"> Add To Cart</button>
     
 
