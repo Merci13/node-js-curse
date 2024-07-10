@@ -32,7 +32,7 @@ const app = express();
 const store = new MongoDBStore({
     uri: MONGO_DB_URI,
     collection: 'sessions',
-  
+
 });
 
 //engines
@@ -66,52 +66,52 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(paht.join(rootDir, 'public')));//take in mind that with this, the path start in the public folder
 app.use(session({
     secret: 'my secret', //this secret has to be a long string value in production
-     resave: false,
-     saveUninitialized: false,
-     //you could configure your cookie here adding the value "cookie" and passing the js object with the configuration. example: cookie:{max-age: 10}
+    resave: false,
+    saveUninitialized: false,
+    //you could configure your cookie here adding the value "cookie" and passing the js object with the configuration. example: cookie:{max-age: 10}
     store: store
-    }));
+}));
 
-app.use((req, res, next) =>{
-    if(!req.session.user){
-       return next();
+app.use((req, res, next) => {
+    if (!req.session.user) {
+        return next();
     }
 
-   User.findById(req.session.user._id)
+    User.findById(req.session.user._id)
         .then(user => {
-         req.user = user;
-        next();
+            req.user = user;
+            next();
         })
         .catch(err => { console.log("Error: ", err, "----------------->>>") });
 
-} );
+});
 //-----------------MiddleWares-------------------//
 
 
 // app.use((req, res, next) => {
-    //-----Sequelize------//
-    // User.findByPk(1)
-    // .then(user => {
-    //     req.user = user;
-    //     next();
-    //  })
-    // .catch(err => { console.log("Error: ", err, "----------------->>>") });
+//-----Sequelize------//
+// User.findByPk(1)
+// .then(user => {
+//     req.user = user;
+//     next();
+//  })
+// .catch(err => { console.log("Error: ", err, "----------------->>>") });
 
-    //-----MongoDB----//
-    // User.findingUserById("6457b588ea161f122e26ab4e")
-    //     .then(user => {
-    //         req.user = new User(user.name, user.email, user._id, user.cart);
-    //         next();
-    //     })
-    //     .catch(err => { console.log("Error: ", err, "----------------->>>") });
+//-----MongoDB----//
+// User.findingUserById("6457b588ea161f122e26ab4e")
+//     .then(user => {
+//         req.user = new User(user.name, user.email, user._id, user.cart);
+//         next();
+//     })
+//     .catch(err => { console.log("Error: ", err, "----------------->>>") });
 
-    //-----Mongoose----//
-    // User.findById("66072470824c4ed989c7afbc")
-    //     .then(user => {
-    //         req.user = user;
-    //         next();
-    //     })
-    //     .catch(err => { console.log("Error: ", err, "----------------->>>") });
+//-----Mongoose----//
+// User.findById("66072470824c4ed989c7afbc")
+//     .then(user => {
+//         req.user = user;
+//         next();
+//     })
+//     .catch(err => { console.log("Error: ", err, "----------------->>>") });
 
 
 
@@ -197,24 +197,9 @@ app.use(errorController.get404);
 
 moongoose
     .connect(MONGO_DB_URI)
-    .then(
-        result => {
-
-            User.findOne().then(user => {
-                if (!user) {
-                    const user = new User({
-                        name: "Test",
-                        email: "test@test.com",
-                        cart: { items: [] }
-
-                    });
-                    user.save();
-                }
-            });
-
-
-            app.listen(3000);
-        }
+    .then(result => {
+        app.listen(3000);
+    }
     ).catch(err => {
         console.log(err + '------------->>>>');
     });

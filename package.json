@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "mongodb": "^5.2.0",
     "mongoose": "^8.2.4",
     "sequelize": "^6.29.3"

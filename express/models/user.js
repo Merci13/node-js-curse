@@ -196,13 +196,19 @@ const { NUMBER } = require('sequelize');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    name: {
-        type: String,
-        require: true,
+    // for now, we don't need this parameter 
+    //name: {
+    //     type: String,
+    //     require: true,
 
-    },
+    // },
+
     email: {
         type: String,
+        require: true
+    },
+    password: {
+        type: String, 
         require: true
     },
     cart: {
