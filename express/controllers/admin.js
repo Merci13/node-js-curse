@@ -3,17 +3,20 @@
 
 const Product = require("../models/product");
 
+const { validationResult } = require('express-validator/check');
 
 
 exports.getAddProduct = (req, res, next) => {
     //res.sendFile(path.join(rootDir,'views', 'add-product.html'))//for routing with html 
-   
+
     res.render(
         'admin/edit-product',
         {
             pageTitle: 'Add Product',
             path: '/add-product',
-            editing: false
+            editing: false,
+            hasError: false,
+            errorMessage: null
 
         });
 
@@ -63,18 +66,43 @@ exports.postAddProduct = (req, res, next) => {
     //     req.user._id
     // );
     //------------Mongoose----------------------------//
+
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()){
+       return res.status(422).render(
+            'admin/edit-product',
+            {
+                pageTitle: 'Add Product',
+                path: '/edit-product',
+                editing: false,
+                hasError: true,
+                product: {
+                    title: title,
+                    imageUrl: imageUrl,
+                    price: price,
+                    description: description,
+
+                },
+
+            errorMessage: errors.array()[0].msg
+
+
+            });
+    }
+
     const product = new Product({
-        title:title, 
-        price: price, 
+        title: title,
+        price: price,
         description: description,
         imageUrl: imageUrl,
-       // userId: req.user //moogose will extract the user id
-         userId: req.user  
-    } );
+        // userId: req.user //moogose will extract the user id
+        userId: req.user
+    });
 
 
     product
-    .save()
+        .save()
         .then(result => {
             console.log("Created product ID:", result);
             res.redirect("admin-products");
@@ -168,29 +196,31 @@ exports.getEditProduct = (req, res, next) => {
     //     .catch(err => {
     //         console.log("Error in admin.js in getEditProduct Method. Error: ", err, " --------------------->>");
     //     })
-         //----------Mongoose -------------------//
+    //----------Mongoose -------------------//
 
     Product.findById(productId)
-    .then(product => {
+        .then(product => {
 
 
-        if (!product) {
-            return res.redirect('/');
-        }
-        res.render(
-            'admin/edit-product',
-            {
-                pageTitle: 'Edit Product',
-                path: '/edit-product',
-                editing: editMode,
-                product: product,
+            if (!product) {
+                return res.redirect('/');
+            }
+            res.render(
+                'admin/edit-product',
+                {
+                    pageTitle: 'Edit Product',
+                    path: '/edit-product',
+                    editing: editMode,
+                    product: product,
+                    hasError: false,
+                    errorMessage: null
 
 
-            });
-    })
-    .catch(err => {
-        console.log("Error in admin.js in getEditProduct Method. Error: ", err, " --------------------->>");
-    })
+                });
+        })
+        .catch(err => {
+            console.log("Error in admin.js in getEditProduct Method. Error: ", err, " --------------------->>");
+        })
 
 
 
@@ -240,20 +270,23 @@ exports.postEditProduct = (req, res, next) => {
     //     .catch(err => {
     //         console.log("Error in admin.js in postEditProduct Method. Error: ", err, " ---------------->>>>>>>");
     //     })
-     //------------Mongoose----------------------//
-    
+    //------------Mongoose----------------------//
 
-     Product.findById(productId).then(product => {
+
+    Product.findById(productId).then(product => {
+        if (product.userId.toString() !== req.user._id.toString()) {
+            return res.redirect('/');
+        }
         product.title = updateTitle;
         product.price = updatePrice;
         product.description = updateDescription;
         product.imageUrl = updateImageUrl;
 
-       return product.save();
-     }).then(result => {
+        return product.save().then(result => {
             //  console.log("Updated Product, Id: ", result._id);
             res.redirect('/products');
-        })
+        });
+    })
         .catch(err => {
             console.log("Error in admin.js in postEditProduct Method. Error: ", err, " ---------------->>>>>>>");
         })
@@ -311,15 +344,15 @@ exports.getProducts = (req, res, nex) => {
 
 
     //------------Mongoose---------------------//
-    Product.find()
-    //.select method allows to return only the data that we need, also, writing "-" in front of a data will remove from the data that we expect
-    // .select(
-    //     'title description -_id'
-    // )
-    //populate method allows to us to get all information from references 
-    // .populate(
-    //     'userId',
-    // )
+    Product.find({ userId: req.user._id })
+        //.select method allows to return only the data that we need, also, writing "-" in front of a data will remove from the data that we expect
+        // .select(
+        //     'title description -_id'
+        // )
+        //populate method allows to us to get all information from references 
+        // .populate(
+        //     'userId',
+        // )
         .then(products => {
 
             res.render('admin/products',
@@ -369,14 +402,14 @@ exports.postDeleteProduct = (req, res, next) => {
     //     console.log(err);
     // });
 
-        // -------------------Mongoose---------------//
+    // -------------------Mongoose---------------//
 
-        Product.findByIdAndDelete(prodId)
+    Product.deleteOne({_id: prodId, userId: req.user._id})
         .then(result => {
             res.redirect('/products');
         })
         .catch(err => {
             console.log(err);
         });
-    
+
 } 
