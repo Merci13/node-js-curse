@@ -59,7 +59,7 @@ exports.getSignup = (req, res, next) => {
         path: '/signup',
         pageTitle: 'Signup',
         errorMessage: message,
-        oldInput: {email: "", password: "", confirmPassword: ""},
+        oldInput: { email: "", password: "", confirmPassword: "" },
         validationErrors: [],
     })
 }
@@ -72,18 +72,18 @@ exports.postLogin = (req, res, next) => {
 
     const errors = validationResult(req);
 
-    if(!errors.isEmpty()){
-           return  res.status(422).render('auth/login', {
-                path: '/login',
-                pageTitle: 'Login',
-                errorMessage: errors.array()[0].msg,
-                oldInput: {
-                    email: email,
-                    password: password
-                },
-                validationErrors : errors.array()
+    if (!errors.isEmpty()) {
+        return res.status(422).render('auth/login', {
+            path: '/login',
+            pageTitle: 'Login',
+            errorMessage: errors.array()[0].msg,
+            oldInput: {
+                email: email,
+                password: password
+            },
+            validationErrors: errors.array()
 
-            });
+        });
     }
 
     User.findOne({ email: email }).then(user => {
@@ -97,7 +97,7 @@ exports.postLogin = (req, res, next) => {
                     email: email,
                     password: password
                 },
-                validationErrors : []
+                validationErrors: []
 
             });
         } else {
@@ -119,14 +119,17 @@ exports.postLogin = (req, res, next) => {
                                 email: email,
                                 password: password
                             },
-                            validationErrors : []
-            
+                            validationErrors: []
+
                         });
                     }
                 })
                 .catch(err => {
                     console.log("Error in controller/auth.js in postLogin method. Error: " + err + "------------>>>>");
                     res.redirect('/login')
+                    const error = new Error(err);
+                    error.httpstatus(500);
+                    return next(error);
                 });
         }
 
@@ -156,10 +159,10 @@ exports.postSignup = (req, res, next) => {
             render('auth/signupt', {
                 path: '/signup',
                 pageTitle: "Signup",
-                errorMessage: errors.array()[0].msg, 
-                oldInput:{ email: email, password: password, confirmPassword: req.body.confirmPassword} ,
+                errorMessage: errors.array()[0].msg,
+                oldInput: { email: email, password: password, confirmPassword: req.body.confirmPassword },
                 validationErrors: errors.array()
-            
+
             });
     }
 
@@ -182,6 +185,9 @@ exports.postSignup = (req, res, next) => {
             })
         }).catch(err => {
             console.log("Error in routes/auth.js, error: " + err + " --------->>>>>>")
+            const error = new Error(err);
+            error.httpstatus(500);
+            return next(error);
         });
 
 
@@ -240,6 +246,9 @@ exports.postReset = (req, res, next) => {
             })
             .catch(err => {
                 console.log("Error in controllers/auth.js in postReset method. Error" + err + " -------------->>>>");
+                const error = new Error(err);
+                error.httpstatus(500);
+                return next(error);
             });
     });
 }
@@ -272,6 +281,9 @@ exports.getNewPassword = (req, res, next) => {
         })
         .catch(err => {
             console.log("Error in controllers/auth.js in getNewPassword method. Error: " + err + "----------->>>");
+            const error = new Error(err);
+            error.httpstatus(500);
+            return next(error);
         });
 
 };
@@ -302,6 +314,9 @@ exports.postNewPassword = (req, res, next) => {
         })
         .catch(err => {
             console.log("Error in controllers/auth.js in method postNewPassword. Error: " + err + "----------->>>>")
+            const error = new Error(err);
+            error.httpstatus(500);
+            return next(error);
         });
 
 

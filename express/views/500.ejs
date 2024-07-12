@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/css/not-found.css">
+    <link rel="stylesheet" href="/css/add-product.css">
+    <title>Document</title>
+</head>
+<body>
+
+  <header class="main-header">
+    <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+            <li class="main-header__item">
+                <a class="<%= path === '/' ? 'active' : '' %>" href="/">Shop</a>
+            </li>
+            <li class="main-header__item">
+                <a class="<%= path === '/products' ? 'active' : '' %>" href="/products">Products</a>
+            </li>
+            <li class="main-header__item">
+                <a class="<%= path === '/cart' ? 'active' : '' %>" href="/cart">Cart</a>
+            </li>
+            <li class="main-header__item">
+                <a class="<%= path === '/orders' ? 'active' : '' %>" href="/orders">Orders</a>
+            </li>
+            <li class="main-header__item">
+                <a  class="<%= path === '/add-product' ? 'active' : '' %>" href="/add-product"> Add Products</a>
+            </li>
+            <li class="main-header__item">
+                <a  class="<%= path === '/admin-products' ? 'active' : '' %>" href="/admin-products"> Admin Products</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+  
+    <a href="" target="_blank">
+        <header class="top-header"> </header>
+      
+      <!--dust particel-->
+      <div>
+        <div class="starsec"></div>
+        <div class="starthird"></div>
+        <div class="starfourth"></div>
+        <div class="starfifth"></div>
+      </div>
+      <!--Dust particle end--->
+      
+      
+      <div class="lamp__wrap">
+        <div class="lamp">
+          <div class="cable"></div>
+          <div class="cover"></div>
+          <div class="in-cover">
+            <div class="bulb"></div>
+          </div>
+          <div class="light"></div>
+        </div>
+      </div>
+      <!-- END Lamp -->
+      <section class="error">
+        <!-- Content -->
+        <div class="error__content">
+          <div class="error__message message">
+            <h1 class="message__title">Some Error Ocurred!</h1>
+            <p class="message__text">We're working on fixing this, sorry for the inconvinience!.</p>
+          </div>
+          <div class="error__nav e-nav">
+            <a href="" target="_blanck" class="e-nav__link"></a>
+          </div>
+        </div>
+        <!-- END Content -->
+      
+      </section>
+      
+        </a>
+</body>
+</html>

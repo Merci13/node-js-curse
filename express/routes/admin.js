@@ -47,7 +47,7 @@ router.post('/delete-product', isAuth,adminController.postDeleteProduct);
 
 router.post('/add-product',[
 
-    body('title').isAlphanumeric().isLength({min: 3}).trim(),
+    body('title').isString().isLength({min: 3}).trim(),
     body('imageUrl').isURL(),
     
     body('price').isFloat(),

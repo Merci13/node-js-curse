@@ -16,7 +16,8 @@ exports.getAddProduct = (req, res, next) => {
             path: '/add-product',
             editing: false,
             hasError: false,
-            errorMessage: null
+            errorMessage: null,
+            validationErrors: []
 
         });
 
@@ -69,12 +70,12 @@ exports.postAddProduct = (req, res, next) => {
 
     const errors = validationResult(req);
 
-    if(!errors.isEmpty()){
-       return res.status(422).render(
-            'admin/edit-product',
+    if (!errors.isEmpty()) {
+        return res.status(422).render(
+            'admin/add-product',
             {
                 pageTitle: 'Add Product',
-                path: '/edit-product',
+                path: '/add-product',
                 editing: false,
                 hasError: true,
                 product: {
@@ -85,7 +86,8 @@ exports.postAddProduct = (req, res, next) => {
 
                 },
 
-            errorMessage: errors.array()[0].msg
+                errorMessage: errors.array()[0].msg,
+                validationErrors: errors.array()
 
 
             });
@@ -109,6 +111,31 @@ exports.postAddProduct = (req, res, next) => {
         })
         .catch(err => {
             console.log('Error in admin.js in controller. Error: ', err, '------------->>');
+            // return res.status(500).render(
+            //     'admin/add-product',
+            //     {
+            //         pageTitle: 'Add Product',
+            //         path: '/add-product',
+            //         editing: false,
+            //         hasError: true,
+            //         product: {
+            //             title: title,
+            //             imageUrl: imageUrl,
+            //             price: price,
+            //             description: description,
+    
+            //         },
+    
+            //         errorMessage: "Database opration failed, please try again",
+            //         validationErrors: []
+    
+    
+            //     });
+            // res.redirect('/500');
+            // throw new Error(err);
+            const error = new Error(err);
+            error.httpstatus(500);
+            return next(error);
         });
 
 
@@ -213,14 +240,18 @@ exports.getEditProduct = (req, res, next) => {
                     editing: editMode,
                     product: product,
                     hasError: false,
-                    errorMessage: null
+                    errorMessage: null,
+                    validationErrors: []
 
 
                 });
         })
         .catch(err => {
             console.log("Error in admin.js in getEditProduct Method. Error: ", err, " --------------------->>");
-        })
+            const error = new Error(err);
+            error.httpstatus(500);
+            return next(error);
+        });
 
 
 
@@ -271,6 +302,27 @@ exports.postEditProduct = (req, res, next) => {
     //         console.log("Error in admin.js in postEditProduct Method. Error: ", err, " ---------------->>>>>>>");
     //     })
     //------------Mongoose----------------------//
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(422).render(
+            'admin/edit-product',
+            {
+                pageTitle: 'Edit Product',
+                path: '/edit-product',
+                editing: true,
+                hasError: true,
+                product: {
+                    title: updateTitle,
+                    imageUrl: updateImageUrl,
+                    price: updatePrice,
+                    description: updateDescription,
+                },
+                errorMessage: errors.array()[0].msg,
+                validationErrors: errors.array(),
+                _id: prodId
+            });
+    }
 
 
     Product.findById(productId).then(product => {
@@ -289,6 +341,9 @@ exports.postEditProduct = (req, res, next) => {
     })
         .catch(err => {
             console.log("Error in admin.js in postEditProduct Method. Error: ", err, " ---------------->>>>>>>");
+            const error = new Error(err);
+            error.httpstatus(500);
+            return next(error);
         })
 
 
@@ -367,6 +422,9 @@ exports.getProducts = (req, res, nex) => {
         })
         .catch(err => {
             console.log("Error in admin.js in getProducts Method. Error: ", err, " ------------->>>>>");
+            const error = new Error(err);
+            error.httpstatus(500);
+            return next(error);
         })
 
 };
@@ -404,12 +462,15 @@ exports.postDeleteProduct = (req, res, next) => {
 
     // -------------------Mongoose---------------//
 
-    Product.deleteOne({_id: prodId, userId: req.user._id})
+    Product.deleteOne({ _id: prodId, userId: req.user._id })
         .then(result => {
             res.redirect('/products');
         })
         .catch(err => {
             console.log(err);
+            const error = new Error(err);
+            error.httpstatus(500);
+            return next(error);
         });
 
 } 
