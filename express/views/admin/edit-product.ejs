@@ -18,7 +18,7 @@
                     <% }%>
                     
                 <form class="product-form" action="/<%if(editing){%>edit-product <%}else{%>add-product<%}%>"
-                    method="POST">
+                    method="POST" enctype="multipart/form-data">
                     <div class="form-control">
                         <label for="title">
                             Title
@@ -30,7 +30,7 @@
                             value="<% if(editing || hasError){ %> <%= product.title %> <% }%>">
 
                     </div>
-                    <div class="form-control">
+                    <!-- <div class="form-control">
                         <label for="imageUrl">
                             Image Url
                         </label>
@@ -39,6 +39,14 @@
 
                         type="text" name="imageUrl" id="imageUrl"
                             value="<% if(editing || hasError){ %> <%= product.imageUrl %> <% }%>">
+
+                    </div> -->
+                    <div class="form-control">
+                        <label for="image">ß
+                            Image
+                        </label>
+                        <input 
+                        type="file" name="image" id="image">
 
                     </div>
                     <div class="form-control">

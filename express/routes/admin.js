@@ -35,9 +35,7 @@ router.get('/edit-product/:productId',isAuth, adminController.getEditProduct);
 
 router.post('/edit-product',[
 
-    body('title').isString().isLength({min: 3}).trim(),
-    body('imageUrl').isURL(),
-    
+    body('title').isString().isLength({min: 3}).trim(),    
     body('price').isFloat(),
     body('description').isLength({min: 5}).trim(),
     
@@ -48,7 +46,6 @@ router.post('/delete-product', isAuth,adminController.postDeleteProduct);
 router.post('/add-product',[
 
     body('title').isString().isLength({min: 3}).trim(),
-    body('imageUrl').isURL(),
     
     body('price').isFloat(),
     body('description').isLength({min: 5}).trim(),

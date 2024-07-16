@@ -4,6 +4,8 @@ const paht = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');//package to help getting data from request
 //const expressHbs = require('express-handlebars');
+const multer = require('multer');
+
 //----------------Mongoose----------------------//
 const moongoose = require('mongoose');
 //----------------Mongoose----------------------//
@@ -22,6 +24,25 @@ const errorController = require('./controllers/error');
 
 const User = require('./models/user');
 const csrfProtection = csrf();
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'images',)
+    }, 
+    filename: (req, file, cb) => {
+        cb(null,new Date().toISOString() + "-" + file.originalname)
+    }
+});
+const fileFilter = (req, file, cb) => {
+
+    if(file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg"){
+
+        cb(null, true, );
+    }else{
+
+        cb(null, false, );
+    }
+
+}
 
 //----------------Sequelize----------------------//
 // const sequelize = require('./utils/database');//this will be the pool for conections
@@ -66,7 +87,16 @@ const rootDir = require('./utils/path');
 
 //-----------------MiddleWares-------------------//
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(multer({
+    dest: 'images', //directory to be store the images in the server side
+    storage: fileStorage,
+    fileFilter: fileFilter
+}).single(
+'image' // this name represent the name of the input that we are expecting get the file
+));
 app.use(express.static(paht.join(rootDir, 'public')));//take in mind that with this, the path start in the public folder
+app.use('/images',express.static(paht.join(rootDir, 'images')));//if we had a request that start with "/images"  then serve this file staticly 
+
 app.use(session({
     secret: 'my secret', //this secret has to be a long string value in production
     resave: false,
