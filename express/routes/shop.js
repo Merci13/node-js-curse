@@ -24,11 +24,15 @@ router.get('/products/:productId', shopController.getProductById); //the ":" tel
 
 router.post('/cart-delete-item', isAuth,shopController.postCartDeleteProduct);
 
-// // router.get('/checkout',shopController.getCheckout);
-
 router.get('/orders', isAuth,shopController.getOrders);
 
-router.post('/create-order', isAuth,shopController.postOrder);
+router.get('/checkout', isAuth, shopController.getCheckout);
+
+router.get('/checkout/success', isAuth, shopController.getCheckoutSuccess );
+
+router.get('/checkout/cancel', shopController.getCheckout);
+
+// router.post('/create-order', isAuth,shopController.postOrder); //using paymenth third package we don't need this rout
 
 router.get('/orders/:orderId', isAuth, shopController.getInvoice);
 

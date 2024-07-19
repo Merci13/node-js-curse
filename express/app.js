@@ -1,10 +1,16 @@
 
 const paht = require('path');
+const fs = require('fs');
+const https = require('https');
 
 const express = require('express');
 const bodyParser = require('body-parser');//package to help getting data from request
 //const expressHbs = require('express-handlebars');
 const multer = require('multer');
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
+
 
 //----------------Mongoose----------------------//
 const moongoose = require('mongoose');
@@ -24,6 +30,12 @@ const errorController = require('./controllers/error');
 
 const User = require('./models/user');
 const csrfProtection = csrf();
+
+//===========SSL setup ==================
+// const privateKey = fs.readFileSync('server.key');//block continuity until the process is finish
+// const certificate = fs.readFileSync('server.cert');
+
+//===========SSL setup ==================
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'images',)
@@ -50,7 +62,8 @@ const fileFilter = (req, file, cb) => {
 // const User = require('./models/user');
 
 
-const MONGO_DB_URI = 'mongodb+srv://mrjorxe:6WGskEOsiBdWVqzW@nodejsproyect.kfi6ldo.mongodb.net/shop?retryWrites=true&w=majority';
+const MONGO_DB_URI =
+ `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@nodejsproyect.kfi6ldo.mongodb.net/${process.env.MONGO_DATA_BASE}?retryWrites=true&w=majority`;
 
 const app = express();
 const store = new MongoDBStore({
@@ -76,7 +89,22 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
+/**
+ * create a file to log in it,
+ * flags: 
+ *          'a' means add at the end of the file
+ *      
+ * For a more advanced/ detailed approach on logging (with higher control),
+ *  see this article: https://blog.risingstack.com/node-js-logging-tutorial/    
+ */
+const accesslogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {
+    flags: 'a',
 
+})
+
+app.use(helmet());
+app.use(compression());
+app.use(morgan('combined', {stream: accesslogStream}));//morgan use accessLogStream to writes the logs 
 
 const rootDir = require('./utils/path');
 //----------------Sequelize-------------------//
@@ -259,7 +287,8 @@ app.use((error, req, res, next) =>{
 moongoose
     .connect(MONGO_DB_URI)
     .then(result => {
-        app.listen(3000);
+         app.listen(process.env.PORT || 3000);
+      //  https.createServer({ key: privateKey, cert: certificate},app).listen(process.env.PORT || 3000);
     }
     ).catch(err => {
         console.log(err + '------------->>>>');

@@ -1,10 +1,10 @@
 
 const { validationResult } = require('express-validator/check')
 const Post = require('../models/post');
-const fs = require("fs");
-const path = require('path');
+const { clearImage } = require('../util/clear-image');
 const User = require('../models/user');
 const io = require('../socket');
+const auth = require('../middleware/auth');
 
 
 exports.getPosts = async (req, res, next) => {
@@ -246,11 +246,23 @@ exports.deletePost = async (req, res, next) => {
 
 }
 
+exports.uploadImage = async (req, res, next) =>{
+    if(!auth){
+        throw new Error("Not authenticated")
+    }
+    if(!req.file){
+        return res.status(200).json({message: "No file provide"});
+    }
+    if(req.body.oldPath){
+        clearImage(req.body.oldPath);
+    }
+    return res.status(201).json({ message: "File stored.", filePath: req.file.path});
 
 
-
-const clearImage = filePath => {
-    filePath = path.join(__dirname, '..', filePath);
-    fs.unlink(filePath, err => console.log(err));
 }
+
+
+
+
+
 

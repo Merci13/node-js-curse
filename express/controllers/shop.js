@@ -4,6 +4,8 @@ const Order = require("../models/order");
 const fs = require('fs');
 const path = require('path');
 const PDFDocument = require('pdfkit');
+const stripe = require('stripe')(process.env.STRIPE_KEY);
+
 const ITEMS_PER_PAGE = 2;
 
 
@@ -75,7 +77,17 @@ exports.getProducts = (req, res, next) => {
    //       console.log(err, "Error Fetchin All --------->>>>>")
    //    });
    //----------Mongoose-------------//
-   Product.find()
+   const page = +req.query.page || 1;
+   let totalItems;
+
+   Product.find().countDocuments()
+      .then(numberOfProducts => {
+         totalItems = numberOfProducts;
+         return Product.find()
+            .skip((page - 1) * ITEMS_PER_PAGE)
+            .limit(ITEMS_PER_PAGE);
+
+      })
       .then(products => {
          res.render('shop/product-list',
             {
@@ -83,6 +95,13 @@ exports.getProducts = (req, res, next) => {
                pageTitle: 'All Products',
                path: '/products',
                activeShop: true,
+               currentPage: page,
+               totalProducts: totalItems,
+               hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+               hastPreviousPage: page > 1,
+               nextPage: page + 1,
+               previousPage: page - 1,
+               lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
             }
          );
       })
@@ -248,12 +267,12 @@ exports.getIndex = (req, res, nex) => {
                path: '/',
                activeShop: true,
                currentPage: page,
-               totalProducts: totalItems, 
+               totalProducts: totalItems,
                hasNextPage: ITEMS_PER_PAGE * page < totalItems,
                hastPreviousPage: page > 1,
                nextPage: page + 1,
-               previousPage: page -1,
-               lastPage: Math.ceil(totalItems/ ITEMS_PER_PAGE)
+               previousPage: page - 1,
+               lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
             }
          );
       })
@@ -633,14 +652,97 @@ exports.postOrder = (req, res, next) => {
       })
 
 };
+exports.getCheckoutSuccess = (req, res, next) => {
+   req.user
+      .populate('cart.items.productId')
+      .then(user => {
+         const products = user.cart.items.map(i => {
+            return { quantity: i.quantity, product: { ...i.productId._doc } };
+         });
+         const order = new Order({
+            user: {
+               email: req.user.email,
+               userId: req.user
+            },
+            products: products
+         });
+
+         return order.save();
+
+      }).then(() => {
+
+         return req.user.clearCart();
+
+      }).then(() => {
+         res.redirect('/orders');
+      })
+      .catch(err => {
+
+         console.log("Error in Method getCart, Error: ", err, "---------------->>>>");
+
+         const error = new Error(err);
+         error.httpstatus(500);
+         return next(error);
+      })
+
+};
 
 exports.getCheckout = (req, res, next) => {
 
-   res.render('shop/checkout', {
-      title: "Checkout",
-      path: '/checkout',
-      pageTitle: "ChekOut",
-   });
+   //to use stripe remember to install the stripe package 
+   // npm install --save stripe
+   //after you install the package you can import it to be use
+
+   let products;
+   let total = 0;
+
+   req.user
+      .populate(
+         'cart.items.productId'
+      )
+
+      .then(user => {
+         const products = user.cart.items;
+         let total = 0;
+         products.forEach(p => {
+            total += p.quantity * p.productId.price;
+         });
+
+         return stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: products.map(p => {
+               return {
+                  name: p.productId.title,
+                  description: p.productId.description,
+                  amount: p.productId.price * 100,
+                  quantity: p.quantity,
+                  currency: 'usd'
+               };
+            }),
+            success_url: req.protocol + '://' + req.get('host') + '/checkout/success',
+            cancel_url: req.protocol + '://' + req.get('host') + '/checkout/cancel'
+
+         })
+            .then(session => {
+               res.render('shop/checkout', {
+                  title: "Checkout",
+                  path: '/checkout',
+                  pageTitle: "ChekOut",
+                  products: products,
+                  totalSum: total,
+                  sessionId: session.id
+               });
+            })
+
+      }).catch(err => {
+         console.log("Error in shop.js file in getCart method. Error: ", err, " ------------------>>>");
+         const error = new Error(err);
+         error.httpstatus(500);
+         return next(error);
+      })
+
+
+
 
 }
 
