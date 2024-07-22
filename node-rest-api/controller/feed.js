@@ -75,7 +75,7 @@ exports.createPost = async (req, res, next) => {
 
 
         user.posts.push(post);
-        await user.save();
+      const savedUser =  await user.save();
 
         io.getIO().emit('posts',
              { action: 'create',
@@ -89,6 +89,7 @@ exports.createPost = async (req, res, next) => {
             post: post,
             creator: { _id: user._id, name: user.name }
         });
+        return savedUser;
 
     } catch (err) {
         if (!err.statusCode) {
